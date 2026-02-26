@@ -318,6 +318,9 @@ table.precios-table .data-row:hover td{filter:brightness(0.96);}
 
 #calDualGrid{grid-template-columns:1fr 1fr;}
 @media(max-width:900px){#calDualGrid{grid-template-columns:1fr!important;}}
+
+/* Capitalize automático en campos de nombre */
+.capitalize-input { text-transform: capitalize; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -436,65 +439,6 @@ table.precios-table .data-row:hover td{filter:brightness(0.96);}
         <div style="color:var(--text-light);font-size:0.85rem;padding:6px 0;">Sin citas registradas para hoy. Usa <strong>+ Agregar cita</strong> para ingresar las reservas del calendario.</div>
       </div>
 
-      <!-- Sección Calendarios: Google + Cal.com API -->
-      <div style="border-top:1px solid rgba(184,124,124,0.15);padding:16px 20px 20px;">
-
-        <!-- Layout de dos columnas en laptop, una en móvil -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" id="calDualGrid">
-
-          <!-- COLUMNA IZQUIERDA: Google Calendar -->
-          <div>
-            <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--rose-dark);font-weight:600;margin-bottom:10px;">
-              📅 Google Calendar · Cub 01 · Láser
-            </div>
-            <div id="calEmbedFrame0" style="border-radius:12px;overflow:hidden;border:1px solid var(--border);background:var(--cream);min-height:480px;"></div>
-          </div>
-
-          <!-- COLUMNA DERECHA: Reservas Cal.com con API -->
-          <div>
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-              <div style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--rose-dark);font-weight:600;">
-                📅️ Reservas Cal.com · Cub 02 &amp; 03
-              </div>
-              <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
-                <select id="calFilterDays" onchange="loadCalBookings()" style="padding:4px 8px;border-radius:16px;border:1.5px solid var(--border);font-size:0.75rem;font-family:'DM Sans',sans-serif;color:var(--text);background:white;cursor:pointer;outline:none;">
-                  <option value="1">Hoy</option>
-                  <option value="3">3 días</option>
-                  <option value="7" selected>Esta semana</option>
-                  <option value="14">2 semanas</option>
-                  <option value="30">Este mes</option>
-                  <option value="0">Todas</option>
-                </select>
-                <select id="calFilterStatus" onchange="loadCalBookings()" style="padding:4px 8px;border-radius:16px;border:1.5px solid var(--border);font-size:0.75rem;font-family:'DM Sans',sans-serif;color:var(--text);background:white;cursor:pointer;outline:none;">
-                  <option value="upcoming">Próximas</option>
-                  <option value="past">Pasadas</option>
-                  <option value="cancelled">Canceladas</option>
-                  <option value="all">Todas</option>
-                </select>
-                <button onclick="loadCalBookings()" title="Actualizar" style="padding:5px 11px;border-radius:16px;border:none;cursor:pointer;font-size:0.75rem;font-weight:600;font-family:'DM Sans',sans-serif;background:linear-gradient(135deg,#1a0f0e,#4a2828);color:#f0d5d1;">
-                  🔄
-                </button>
-              </div>
-            </div>
-            <div id="calBookingsContainer" style="border:1px solid var(--border);border-radius:12px;padding:10px;background:white;min-height:480px;max-height:520px;overflow-y:auto;">
-              <div style="text-align:center;padding:28px;color:var(--text-light);font-size:0.85rem;">
-                <div style="font-size:1.8rem;margin-bottom:8px;">📅️</div>
-                Cargando reservas de Cal.com…
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-      </div>
-    </div>
-    <!-- Pacientes a contactar -->
-    <div class="inicio-card" style="grid-column:1/-1;">
-      <div class="inicio-card-title">🔔 Pacientes a Contactar — Día 21 desde su última sesión</div>
-      <div id="alertBannerInicio"><div style="color:var(--text-light);font-size:0.85rem;padding:10px 0;">✅ No hay pacientes para contactar esta semana.</div></div>
-    </div>
-  </div>
-
   <!-- Acciones rápidas -->
   <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--rose-dark);margin-bottom:12px;">Acciones Rápidas</div>
   <div class="quick-actions" style="margin-bottom:22px;grid-template-columns:repeat(3,1fr);">
@@ -506,50 +450,42 @@ table.precios-table .data-row:hover td{filter:brightness(0.96);}
       <div class="qa-icon" style="background:var(--rose-light);">👤</div>
       <div><div class="qa-text">Nueva Paciente</div><div class="qa-sub">Registrar en la base de datos</div></div>
     </button>
-    <button class="quick-action-btn" onclick="showSectionById('pagos')">
-      <div class="qa-icon" style="background:#e8f4ea;">💰</div>
-      <div><div class="qa-text">Ver Pagos</div><div class="qa-sub">Saldos y finanzas</div></div>
-    </button>
-    <button class="quick-action-btn" onclick="showSectionById('seguimiento')">
-      <div class="qa-icon" style="background:var(--gold-light);">📊</div>
-      <div><div class="qa-text">Seguimiento</div><div class="qa-sub">Historial de sesiones</div></div>
-    </button>
     <button class="quick-action-btn" onclick="showSectionById('whatsapp')">
       <div class="qa-icon" style="background:#dcf8c6;">💬</div>
       <div><div class="qa-text">Enviar WhatsApp</div><div class="qa-sub">Recordatorios a pacientes</div></div>
     </button>
-    <button class="quick-action-btn" onclick="openBackupHistory()">
-      <div class="qa-icon" style="background:#e8f0fe;">💾</div>
-      <div><div class="qa-text">Respaldo / Historial</div><div class="qa-sub">Ver versiones anteriores · Descargar Excel</div></div>
-    </button>
+  </div><!-- /quick-actions -->
+      </div><!-- /agendaHoyContainer area -->
+    </div><!-- /inicio-card -->
+  </div><!-- /inicio-grid -->
+
+  <!-- Reservas Cal.com -->
+  <div style="background:white;border-radius:18px;border:1px solid var(--border);margin-top:20px;overflow:hidden;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--rose-dark);font-weight:600;">🗓️ Reservas agendadas — Cal.com</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+        <select id="calFilterDays" class="search-box" style="width:auto;flex:0;font-size:0.78rem;" onchange="loadCalBookings()">
+          <option value="1">Hoy</option>
+          <option value="3">3 días</option>
+          <option value="7" selected>Esta semana</option>
+          <option value="14">2 semanas</option>
+          <option value="30">Este mes</option>
+          <option value="0">Todas</option>
+        </select>
+        <select id="calFilterStatus" class="search-box" style="width:auto;flex:0;font-size:0.78rem;" onchange="loadCalBookings()">
+          <option value="upcoming">Próximas</option>
+          <option value="past">Pasadas</option>
+          <option value="cancelled">Canceladas</option>
+          <option value="all">Todas</option>
+        </select>
+        <button class="btn btn-secondary" style="font-size:0.78rem;padding:6px 12px;" onclick="loadCalBookings()">🔄 Actualizar</button>
+      </div>
+    </div>
+    <div id="calBookingsContainer" style="min-height:80px;"></div>
   </div>
 
-  <!-- Calendarios -->
-  <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--rose-dark);margin-bottom:12px;">Agenda por Cubículo</div>
-  <div class="cal-cards-grid">
-    <a href="https://calendar.app.google/3hRGipXZtueFVbVm6" target="_blank" class="calendar-hero-btn" id="laserCalBtnI">
-      <div class="cal-left">
-        <div class="cal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
-        <div><div class="cal-title">Cubículo 01</div><div class="cal-sub">Depilación Láser · Google Calendar</div><div class="cal-open" id="calTodayDateI"></div></div>
-      </div>
-      <div style="color:rgba(240,213,209,0.6);font-size:1.4rem;">→</div>
-    </a>
-    <a href="https://cal.com/elle-studio-56pfyg/tratamientos-ellestudio02" target="_blank" class="calendar-hero-btn calendly-btn" id="cal02BtnI">
-      <div class="cal-left">
-        <div class="cal-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <div><div class="cal-title">Cubículo 02</div><div class="cal-sub">Glúteos · Facial · Espalda · Cal.com</div><div class="cal-open" style="color:rgba(200,220,255,0.7);">Gratis →</div></div>
-      </div>
-      <div style="color:rgba(200,220,255,0.4);font-size:1.4rem;">→</div>
-    </a>
-    <a href="https://cal.com/elle-studio-56pfyg/gluteos-de-porcelana" target="_blank" class="calendar-hero-btn" id="cal03BtnI" style="background:linear-gradient(135deg,#0d2818 0%,#1a5c38 60%,#237a4a 100%);">
-      <div class="cal-left">
-        <div class="cal-icon" style="background:rgba(100,220,150,0.15);border-color:rgba(100,220,150,0.25);"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-        <div><div class="cal-title" style="color:#c8ffd8;">Cubículo 03</div><div class="cal-sub" style="color:rgba(200,255,220,0.65);">Glúteos · Reductores · Cal.com</div><div class="cal-open" style="color:rgba(200,255,220,0.5);">Gratis →</div></div>
-      </div>
-      <div style="color:rgba(200,255,220,0.3);font-size:1.4rem;">→</div>
-    </a>
-  </div>
-</div>
+</div><!-- /sec-inicio -->
+
 
 <!-- PACIENTES -->
 <div class="section" id="sec-pacientes">
@@ -625,36 +561,52 @@ table.precios-table .data-row:hover td{filter:brightness(0.96);}
 <!-- WHATSAPP -->
 <div class="section" id="sec-whatsapp">
   <div class="section-header"><h2>Mensajes de WhatsApp</h2></div>
-  <div style="background:white;border-radius:14px;border:1px solid var(--border);padding:18px;margin-bottom:18px;">
-    <h3 style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;margin-bottom:4px;">⚙️ Links de agenda por cubículo</h3>
-    <p style="font-size:0.78rem;color:var(--text-light);margin-bottom:14px;">El mensaje usa automáticamente el link del cubículo según el servicio de la paciente.</p>
-    <div class="form-grid">
-      <div class="form-group"><label>🔴 Cubículo 01 · Láser</label><input id="calendarLink" value="https://calendar.app.google/3hRGipXZtueFVbVm6"><span style="font-size:0.72rem;color:var(--text-light);">→ Depilación Láser</span></div>
-      <div class="form-group"><label>🔵 Cubículo 02 · Tratamientos</label><input id="bookingLink" value="https://cal.com/elle-studio-56pfyg/tratamientos-ellestudio02"><span style="font-size:0.72rem;color:var(--text-light);">→ Glúteos · Facial · Espalda · Reductores</span></div>
-      <div class="form-group"><label>🟢 Cubículo 03 · Tratamientos</label><input id="bookingLink2" value="https://cal.com/elle-studio-56pfyg/gluteos-de-porcelana"><span style="font-size:0.72rem;color:var(--text-light);">→ Glúteos · Reductores (alternativo)</span></div>
-      <div class="form-group"><label>Dirección</label><input id="clinicAddress" value="Av. Paz Soldán 235, San Isidro 15073, Lima, Perú"></div>
-      <div class="form-group full" style="background:linear-gradient(135deg,rgba(184,124,124,0.05),rgba(184,160,114,0.05));border-radius:12px;padding:14px;border:1px solid var(--border);margin-top:4px;">
-        <div style="font-family:'Cormorant Garamond',serif;font-size:1rem;color:var(--rose-dark);margin-bottom:12px;font-weight:500;">📆 Calendarios embebidos — Agenda de Hoy</div>
-        <div style="display:flex;flex-direction:column;gap:10px;">
-          <div>
-            <label>📅 Google Calendar · Cubículo 01 · Láser</label>
-            <input id="calEmbedUrl" placeholder="https://calendar.google.com/calendar/embed?src=..." style="font-size:0.8rem;margin-top:4px;">
-            <span style="font-size:0.71rem;color:var(--text-light);display:block;margin-top:3px;">Google Calendar → ⚙️ → tu calendario → "Integrar calendario" → copia el <strong>src del iframe</strong></span>
-          </div>
-          <div>
-            <label>🔵 Cal.com · Cubículo 02 · Tratamientos</label>
-            <input id="calEmbedCal02" placeholder="https://cal.com/elle-studio-56pfyg/tratamientos-ellestudio02" style="font-size:0.8rem;margin-top:4px;">
-            <span style="font-size:0.71rem;color:var(--text-light);display:block;margin-top:3px;">Pega el link directo de tu evento de Cal.com (el mismo que compartes con pacientes)</span>
-          </div>
-          <div>
-            <label>🟢 Cal.com · Cubículo 03 · Glúteos & Reductores</label>
-            <input id="calEmbedCal03" placeholder="https://cal.com/elle-studio-56pfyg/gluteos-de-porcelana" style="font-size:0.8rem;margin-top:4px;">
-            <span style="font-size:0.71rem;color:var(--text-light);display:block;margin-top:3px;">Pega el link directo de tu evento de Cal.com del cubículo 03</span>
-          </div>
+
+  <!-- ── BLOQUE CALENDARIOS + RECORDATORIOS (igual que Inicio) ── -->
+  <div style="margin-bottom:22px;">
+
+    <!-- Tarjeta ALERTAS: Pacientes a contactar hoy/mañana -->
+    <div style="background:linear-gradient(135deg,#fff9f7,#faf5f0);border-radius:16px;border:2px solid rgba(184,124,124,0.3);padding:0;overflow:hidden;margin-bottom:16px;box-shadow:0 2px 12px rgba(184,124,124,0.08);">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;border-bottom:1px solid rgba(184,124,124,0.15);background:linear-gradient(135deg,rgba(184,124,124,0.08),rgba(184,160,114,0.06));">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.15rem;color:var(--rose-dark);font-weight:700;display:flex;align-items:center;gap:8px;">
+          ⏰ Recordatorio — 1 día antes
+          <span style="font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:400;background:rgba(184,124,124,0.12);color:var(--rose-dark);padding:3px 10px;border-radius:20px;">Pacientes a contactar</span>
         </div>
+        <button class="btn btn-green" style="font-size:0.78rem;padding:6px 14px;" onclick="renderWaAlertsPanel()">🔄 Actualizar</button>
+      </div>
+      <div id="waAlertsBanner" style="padding:14px 20px 10px;">
+        <div style="color:var(--text-light);font-size:0.85rem;">Cargando...</div>
+      </div>
+    </div>
+
+    <!-- Calendarios embebidos (igual que inicio) -->
+    <div style="background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;">
+      <div style="padding:14px 18px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--rose-dark);font-weight:600;">📅 Agenda — Calendarios del estudio</div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button id="waCalTabBtn0" onclick="switchWaCalTab(0)" style="background:linear-gradient(135deg,#1a0f0e,#4a2828);color:#f0d5d1;border:none;border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">🔴 Láser</button>
+          <button id="waCalTabBtn1" onclick="switchWaCalTab(1)" style="background:white;color:var(--text-light);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">🔵 Tratam. 02</button>
+          <button id="waCalTabBtn2" onclick="switchWaCalTab(2)" style="background:white;color:var(--text-light);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">🟢 Tratam. 03</button>
+          <button id="waBtnAllCals" onclick="toggleWaAllCals()" style="background:white;color:var(--text-light);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:'DM Sans',sans-serif;">⊞ Ver todos</button>
+        </div>
+      </div>
+      <!-- Vista single -->
+      <div id="waCalSingleView">
+        <div id="waCalPanel0" style="display:block;"><div id="waCalFrame0" style="min-height:420px;"></div></div>
+        <div id="waCalPanel1" style="display:none;"><div id="waCalFrame1" style="min-height:420px;"></div></div>
+        <div id="waCalPanel2" style="display:none;"><div id="waCalFrame2" style="min-height:420px;"></div></div>
+      </div>
+      <!-- Vista todos -->
+      <div id="waCalAllView" style="display:none;">
+        <div id="calDualGrid" style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
+          <div id="waCalAllFrame0" style="border-right:1px solid var(--border);"></div>
+          <div id="waCalAllFrame1" style="border-right:1px solid var(--border);"></div>
+        </div>
+        <div id="waCalAllFrame2" style="border-top:1px solid var(--border);"></div>
       </div>
     </div>
   </div>
+
   <!-- TARJETAS PREDETERMINADAS -->
   <div id="waCardsContainer">
   <div class="wa-card" id="waCard-1" style="border-color:var(--rose);border-width:2px;">
@@ -838,7 +790,7 @@ Te esperamos hoy! ✨</div>
           <div><label class="form-label" style="font-size:0.68rem;">1 Sesión</label><input type="number" id="pMSesion" class="form-input" placeholder="—" min="0" step="0.10"></div>
           <div><label class="form-label" style="font-size:0.68rem;">Paquete ×3</label><input type="number" id="pMPaq3" class="form-input" placeholder="—" min="0" step="0.10"></div>
           <div><label class="form-label" style="font-size:0.68rem;">Paquete ×6</label><input type="number" id="pMPaq6" class="form-input" placeholder="—" min="0" step="0.10"></div>
-          <div><label class="form-label" style="font-size:0.68rem;">Paquete ×12</label><input type="number" id="pMPaquete" class="form-input" placeholder="—" min="0" step="0.10"></div>
+
         </div>
       </div>
       <div class="mprice-panel" id="mpanel-hombre">
@@ -846,7 +798,7 @@ Te esperamos hoy! ✨</div>
           <div><label class="form-label" style="font-size:0.68rem;">1 Sesión</label><input type="number" id="pHSesion" class="form-input" placeholder="—" min="0" step="0.10"></div>
           <div><label class="form-label" style="font-size:0.68rem;">Paquete ×3</label><input type="number" id="pHPaq3" class="form-input" placeholder="—" min="0" step="0.10"></div>
           <div><label class="form-label" style="font-size:0.68rem;">Paquete ×6</label><input type="number" id="pHPaq6" class="form-input" placeholder="—" min="0" step="0.10"></div>
-          <div><label class="form-label" style="font-size:0.68rem;">Paquete ×12</label><input type="number" id="pHPaquete" class="form-input" placeholder="—" min="0" step="0.10"></div>
+
         </div>
       </div>
     </div>
@@ -1816,7 +1768,7 @@ function showSection(id,el){
   document.getElementById('sec-'+id).classList.add('active');
   el.classList.add('active');
   if(id==='seguimiento'){populateTrkSvcFilter();renderTracking();}
-  if(id==='whatsapp')populateWaSelects();
+  if(id==='whatsapp'){populateWaSelects();initWaSection();}
   if(id==='precitas'){populatePcServiceSelect('pcServicio');renderPreCitas();renderPcStats();}
   if(id==='pagos'){renderPagos();renderPgSummary();}
   if(id==='precios'){renderPrecios();}
@@ -2016,6 +1968,130 @@ function toggleAllCals(){
 // Legacy stub — kept for safety
 function toggleCalEmbed(){switchCalTab(0);}
 
+// ===== WHATSAPP SECTION: CALENDARIOS + ALERTAS =====
+let _waCalTabActive = 0;
+let _waCalAllVisible = false;
+let _waCalRendered = false;
+
+function renderWaCalFrames(){
+  const urls = getCalUrls();
+  const f0=document.getElementById('waCalFrame0');
+  const f1=document.getElementById('waCalFrame1');
+  const f2=document.getElementById('waCalFrame2');
+  if(f0) f0.innerHTML = buildCalFrame(urls.google, true, 480);
+  if(f1) f1.innerHTML = buildCalFrame(urls.cal02, false, 480);
+  if(f2) f2.innerHTML = buildCalFrame(urls.cal03, false, 480);
+  const a0=document.getElementById('waCalAllFrame0');
+  const a1=document.getElementById('waCalAllFrame1');
+  const a2=document.getElementById('waCalAllFrame2');
+  if(a0) a0.innerHTML = buildCalFrame(urls.google, true, 380);
+  if(a1) a1.innerHTML = buildCalFrame(urls.cal02, false, 380);
+  if(a2) a2.innerHTML = buildCalFrame(urls.cal03, false, 380);
+  _waCalRendered = true;
+}
+
+function switchWaCalTab(idx){
+  _waCalTabActive = idx;
+  _waCalAllVisible = false;
+  document.getElementById('waCalSingleView').style.display='block';
+  document.getElementById('waCalAllView').style.display='none';
+  [0,1,2].forEach(i=>{
+    const p=document.getElementById(`waCalPanel${i}`);
+    if(p) p.style.display = i===idx?'block':'none';
+    const btn=document.getElementById(`waCalTabBtn${i}`);
+    if(btn){
+      btn.style.cssText = i===idx
+        ? 'background:linear-gradient(135deg,#1a0f0e,#4a2828);color:#f0d5d1;border:none;border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:\'DM Sans\',sans-serif;'
+        : 'background:white;color:var(--text-light);border:1.5px solid var(--border);border-radius:8px;padding:6px 12px;font-size:0.75rem;cursor:pointer;font-family:\'DM Sans\',sans-serif;';
+    }
+  });
+  const allBtn=document.getElementById('waBtnAllCals');
+  if(allBtn){allBtn.style.background='white';allBtn.style.color='var(--text-light)';}
+  if(!_waCalRendered) renderWaCalFrames();
+}
+
+function toggleWaAllCals(){
+  _waCalAllVisible = !_waCalAllVisible;
+  document.getElementById('waCalSingleView').style.display = _waCalAllVisible?'none':'block';
+  document.getElementById('waCalAllView').style.display = _waCalAllVisible?'block':'none';
+  const allBtn=document.getElementById('waBtnAllCals');
+  if(allBtn){
+    allBtn.style.background = _waCalAllVisible?'linear-gradient(135deg,#1a0f0e,#4a2828)':'white';
+    allBtn.style.color = _waCalAllVisible?'#f0d5d1':'var(--text-light)';
+  }
+  if(_waCalAllVisible){
+    [0,1,2].forEach(i=>{
+      const btn=document.getElementById(`waCalTabBtn${i}`);
+      if(btn){btn.style.background='white';btn.style.color='var(--text-light)';btn.style.border='1.5px solid var(--border)';}
+    });
+  }
+  if(!_waCalRendered) renderWaCalFrames();
+}
+
+// Renderizar panel de alertas "1 día antes" en la sección WA
+function renderWaAlertsPanel(){
+  const el=document.getElementById('waAlertsBanner');
+  if(!el)return;
+
+  // Buscar pacientes con cita MAÑANA (próxima sesión esperada en 1 día)
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate()+1);
+  const tomorrowStr = tomorrow.toISOString().split('T')[0];
+  const today = new Date().toISOString().split('T')[0];
+
+  const upcomingToday=[];
+  const upcomingTomorrow=[];
+  const upcomingWeek=[];
+
+  patients.forEach(p=>{
+    (p.servicios||[]).forEach(sv=>{
+      const todasConcluidas=(sv.zonas||[]).length>0&&(sv.zonas||[]).every(z=>z.concluida);
+      if(todasConcluidas)return;
+      const nd=nextApptForSvc(sv);
+      if(!nd)return;
+      const diff=daysDiff(nd);
+      if(diff===null)return;
+      if(diff===0) upcomingToday.push({p,sv,nd,diff});
+      else if(diff===1) upcomingTomorrow.push({p,sv,nd,diff});
+      else if(diff>1&&diff<=7) upcomingWeek.push({p,sv,nd,diff});
+    });
+  });
+
+  if(!upcomingToday.length && !upcomingTomorrow.length && !upcomingWeek.length){
+    el.innerHTML=`<div style="color:var(--text-light);font-size:0.85rem;padding:8px 0;">✅ No hay pacientes con cita hoy ni en los próximos 7 días.</div>`;
+    return;
+  }
+
+  const renderGroup=(list,label,bg,color)=>{
+    if(!list.length)return'';
+    return`<div style="margin-bottom:12px;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;">
+        <span style="background:${bg};color:${color};padding:3px 12px;border-radius:20px;font-size:0.73rem;font-weight:700;">${label}</span>
+      </div>
+      ${list.map(({p,sv,nd})=>`
+        <div class="alert-item" style="margin-left:8px;border-left:3px solid ${color};padding-left:14px;background:rgba(255,255,255,0.7);">
+          <div style="flex:1;">
+            <div style="font-weight:700;font-size:0.9rem;">👤 ${p.nombre} ${p.apellido} ${cubTag(sv.cubiculo)}</div>
+            <div style="font-size:0.78rem;color:var(--text-light);">${sv.servicio} · Cita esperada: ${fmtDate(nd)}</div>
+          </div>
+          <button class="btn btn-secondary" style="font-size:0.74rem;padding:5px 10px;" onclick="openDetail(${p.id})">👁 Ver</button>
+          <button class="btn btn-green" style="font-size:0.74rem;padding:5px 10px;" onclick="quickWa(${p.id},'${sv.id}')">📲 WA</button>
+        </div>`).join('')}
+    </div>`;
+  };
+
+  el.innerHTML=
+    renderGroup(upcomingToday,'📍 HOY','#fde8e8','var(--red)')+
+    renderGroup(upcomingTomorrow,'⏰ Mañana — Enviar recordatorio ahora','#fff3cd','#c47a00')+
+    renderGroup(upcomingWeek,'📅 Esta semana','#e8f5e9','#2e7d32');
+}
+
+// Inicializar WA section cuando se activa
+function initWaSection(){
+  renderWaAlertsPanel();
+  if(!_waCalRendered) renderWaCalFrames();
+}
+
 // ===== CAL.COM API BOOKINGS =====
 const CAL_API_KEY = 'cal_live_14f8fba05600db92f996f048c8c40c20';
 
@@ -2184,6 +2260,9 @@ function renderAlertsInicio(){
   patients.forEach(p=>{
     (p.servicios||[]).forEach(sv=>{
       // Alert date = 3 weeks after last session (the day to send reminder = 21st day)
+      // Si todas las zonas están concluidas, no mostrar en recordatorios
+      const todasConcluidas=(sv.zonas||[]).length>0&&(sv.zonas||[]).every(z=>z.concluida);
+      if(todasConcluidas)return;
       const ls=lastSesForSvc(sv);if(!ls)return;
       const alertDate=addWeeks(ls,3); // día 21 → enviar recordatorio
       const nd=nextApptForSvc(sv);    // día 21 o 28 → cita esperada
@@ -2370,19 +2449,21 @@ function renderZones(p,sv,svi){
     <div class="zone-block">
       <div class="zone-header" onclick="toggleZone(${svi},${zi})">
         <h4>📍 ${z.nombre}</h4>
-        <div style="display:flex;gap:8px;align-items:center;"><span class="badge blue">${z.sesiones.length} ses.</span><span id="zarr_${svi}_${zi}">▼</span></div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button onclick="event.stopPropagation();togZonaEstado(${svi},${zi})" style="padding:3px 10px;border-radius:20px;border:none;cursor:pointer;font-size:0.72rem;font-weight:700;background:${z.concluida?'#fde8e8':'#e8f5e9'};color:${z.concluida?'#c46060':'#4a7c59'};">${z.concluida?'● Concluida':'● Activa'}</button>
+          <span class="badge blue">${z.sesiones.length} ses.</span><span id="zarr_${svi}_${zi}">▼</span>
+        </div>
       </div>
       <div id="zbody_${svi}_${zi}">
         <div class="laser-table-wrap">
           <table class="laser"><thead><tr>
             <th>#</th><th>Fecha</th>${isLaser?'<th>Rate</th><th>Pulse</th><th>CM²</th>':''}
-            <th>Asistió</th><th>Plan</th><th>Atendió</th><th>Comentarios</th><th></th>
+            <th>Plan</th><th>Atendió</th><th>Comentarios</th><th></th>
           </tr></thead><tbody>
           ${z.sesiones.map((s,si)=>`<tr>
             <td><div class="ses-num">${si+1}</div></td>
             <td><input type="date" value="${s.fecha||''}" style="width:125px" onchange="updSes(${svi},${zi},${si},'fecha',this.value)"></td>
             ${isLaser?`<td><input type="number" value="${s.rate||''}" placeholder="J" style="width:60px" onchange="updSes(${svi},${zi},${si},'rate',this.value)"></td><td><input type="number" value="${s.pulse||''}" placeholder="ms" style="width:60px" onchange="updSes(${svi},${zi},${si},'pulse',this.value)"></td><td><input type="number" value="${s.cm2||''}" placeholder="cm²" style="width:60px" onchange="updSes(${svi},${zi},${si},'cm2',this.value)"></td>`:''}
-            <td><button class="${s.asistio?'on-badge':'off-badge'}" onclick="togAs(${svi},${zi},${si})">${s.asistio?'✓ Sí':'✗ No'}</button></td>
             <td><select style="width:80px" onchange="updSes(${svi},${zi},${si},'plan',this.value)"><option ${s.plan==='Sesión'?'selected':''}>Sesión</option><option ${s.plan==='Paquete'?'selected':''}>Paquete</option></select></td>
             <td><input type="text" value="${s.atencion||''}" placeholder="Prof." style="width:95px" onchange="updSes(${svi},${zi},${si},'atencion',this.value)"></td>
             <td><input type="text" value="${s.comentarios||''}" placeholder="Notas..." style="width:140px" onchange="updSes(${svi},${zi},${si},'comentarios',this.value)"></td>
@@ -2404,6 +2485,7 @@ function togAs(svi,zi,si){const p=patients.find(x=>x.id===currentPid);const s=p.
 function addSes(svi,zi){const p=patients.find(x=>x.id===currentPid);const sv=p.servicios[svi];const today=new Date().toISOString().split('T')[0];sv.zonas[zi].sesiones.push({fecha:today,rate:'',pulse:'',cm2:'',asistio:false,plan:sv.plan||'Sesión',atencion:'',comentarios:''});save();renderZones(p,sv,svi);renderStats();renderAlerts();renderPatients();}
 function delSes(svi,zi,si){if(!confirm('¿Eliminar sesión?'))return;const p=patients.find(x=>x.id===currentPid);p.servicios[svi].zonas[zi].sesiones.splice(si,1);save();renderZones(p,p.servicios[svi],svi);renderStats();renderAlerts();renderPatients();}
 function delZone(svi,zi){if(!confirm('¿Eliminar zona?'))return;const p=patients.find(x=>x.id===currentPid);p.servicios[svi].zonas.splice(zi,1);save();renderZones(p,p.servicios[svi],svi);}
+function togZonaEstado(svi,zi){const p=patients.find(x=>x.id===currentPid);const z=p.servicios[svi].zonas[zi];z.concluida=!z.concluida;save();renderZones(p,p.servicios[svi],svi);renderAlerts();}
 function deleteSvc(svId){if(!confirm('¿Eliminar este servicio y todas sus sesiones?'))return;const p=patients.find(x=>x.id===currentPid);p.servicios=p.servicios.filter(sv=>sv.id!=svId);save();renderSvcTabs(p);renderStats();renderAlerts();renderPatients();}
 
 let _addZoneSvi=0;
@@ -3985,7 +4067,7 @@ function renderPrecios(){
     const allItems=cats.flatMap(c=>c.items);
     const hasPaq3=allItems.some(i=>i.mPaq3!=null||i.hPaq3!=null);
     const hasPaq6=allItems.some(i=>i.mPaq6!=null||i.hPaq6!=null);
-    const hasPaq12=allItems.some(i=>i.mPaquete!=null||i.hPaquete!=null);
+    const hasPaq12=false; // columna Paquete oculta
     const hasH=allItems.some(i=>i.hSesion!=null||i.hPaq3!=null||i.hPaq6!=null||i.hPaquete!=null);
     const icon=SVC_ICONS[svc]||'💎';
 
@@ -4010,11 +4092,11 @@ function renderPrecios(){
           <th class="th-sub-mujer">Sesión</th>
           ${hasPaq3?`<th class="th-sub-mujer">×3</th>`:''}
           ${hasPaq6?`<th class="th-sub-mujer">×6</th>`:''}
-          ${hasPaq12?`<th class="th-sub-mujer">Paquete</th>`:''}
+
           ${hasH?`<th class="th-sub-hombre">Sesión</th>`:''}
           ${hasH&&hasPaq3?`<th class="th-sub-hombre">×3</th>`:''}
           ${hasH&&hasPaq6?`<th class="th-sub-hombre">×6</th>`:''}
-          ${hasH&&hasPaq12?`<th class="th-sub-hombre">Paquete</th>`:''}
+
         </tr>
       </thead><tbody>`;
 
@@ -4033,11 +4115,11 @@ function renderPrecios(){
           <td class="mujer-cell">${fmtN(item.mSesion)}</td>
           ${hasPaq3?`<td class="mujer-cell">${fmtN(item.mPaq3)}</td>`:''}
           ${hasPaq6?`<td class="mujer-cell">${fmtN(item.mPaq6)}</td>`:''}
-          ${hasPaq12?`<td class="mujer-cell">${fmtN(item.mPaquete)}</td>`:''}
+
           ${hasH?`<td class="hombre-cell">${fmtN(item.hSesion)}</td>`:''}
           ${hasH&&hasPaq3?`<td class="hombre-cell">${fmtN(item.hPaq3)}</td>`:''}
           ${hasH&&hasPaq6?`<td class="hombre-cell">${fmtN(item.hPaq6)}</td>`:''}
-          ${hasH&&hasPaq12?`<td class="hombre-cell">${fmtN(item.hPaquete)}</td>`:''}
+
           ${isAdmin?`<td style="background:white;border:1px solid #ddd;"><button class="btn-edit-zona" onclick="openEditPrecioItem(${realCI},${realII})">✏️ Editar</button></td>`:''}
         </tr>`;
       });
@@ -4278,6 +4360,18 @@ function deletePromo(i){
   savePrecios();closePromoModal();renderPrecios();
   showToast('🗑 Promoción eliminada','#c46060');
 }
+
+// Capitalizar primera letra de cada palabra en campos de nombre
+function applyCapitalize(id){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.classList.add('capitalize-input');
+  el.addEventListener('blur',function(){
+    this.value=this.value.replace(/\b\w/g,c=>c.toUpperCase());
+  });
+}
+['nNombre','nApellido','eNombre','eApellido','pcNombre','pcApellido','epcNombre','epcApellido','nrNombre','nrApellido'].forEach(applyCapitalize);
+
 </script>
 </body>
 </html>
