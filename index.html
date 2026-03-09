@@ -199,6 +199,7 @@ main{padding:22px 28px;padding-left:max(28px,env(safe-area-inset-left));padding-
   #calDualGridWA{grid-template-columns:1fr!important;}
   header > div:last-child{gap:6px!important;}
   header > div:last-child button{padding:7px 10px!important;font-size:0.75rem!important;}
+  header .btn-primary{display:none!important;}
 }
 /* Ocultar banner también en tablet */
 @media(max-width:1024px){
@@ -2041,8 +2042,9 @@ function populateTrkSvcFilter(){const sel=document.getElementById('trk-svc');if(
 function showSectionById(id){const tabs=document.querySelectorAll('.tab');const sections=['inicio','precitas','pacientes','seguimiento','pagos','whatsapp','precios'];const idx=sections.indexOf(id);if(idx>=0&&tabs[idx])showSection(id,tabs[idx]);_syncBottomNav(id);}
 function _syncBottomNav(id){const map={inicio:0,pacientes:1,precitas:2,whatsapp:3};const items=document.querySelectorAll('.bn-item');items.forEach(x=>x.classList.remove('active'));if(map[id]!==undefined&&items[map[id]])items[map[id]].classList.add('active');else if(items[4])items[4].classList.add('active');}
 function bnNav(id,el){
-  document.getElementById('bnMasMenu').style.display='none';
-  if(id==='mas'){document.getElementById('bnMasMenu').style.display='block';return;}
+  const masMenu=document.getElementById('bnMasMenu');
+  if(id==='mas'){masMenu.style.display=masMenu.style.display==='block'?'none':'block';return;}
+  masMenu.style.display='none';
   const sectionIds=['inicio','precitas','pacientes','seguimiento','pagos','whatsapp','precios'];
   const tabs=document.querySelectorAll('.tab');
   const tabEl=tabs[sectionIds.indexOf(id)]||null;
@@ -3798,7 +3800,14 @@ function saveNewWaCard(){
 }
 
 function sendWaClipboard(tel, msg) {
-  window.open('https://wa.me/' + tel.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg), '_blank');
+  const url = 'https://wa.me/' + tel.replace(/\D/g,'') + '?text=' + encodeURIComponent(msg);
+  const a = document.createElement('a');
+  a.href = url;
+  a.target = '_blank';
+  a.rel = 'noopener';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
 
 function buildMsg(n,pid,svId){
