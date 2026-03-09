@@ -1826,41 +1826,36 @@ async function supaLoadConfig(key){
 // Inicializar datos desde Supabase al cargar
 async function initFromSupabase(){
   showToast('🔄 Sincronizando datos...','#6a8c5a');
-  try{
-    // Cargar pacientes
-    const remotePatients = await supaLoadPatients();
-    if(remotePatients !== null && remotePatients.length >= 0){
-      patients = remotePatients;
-      localStorage.setItem('ce_v3_patients', JSON.stringify(patients));
-    }
-    // Cargar preCitas
-    const remotePC = await supaLoadConfig('precitas');
-    if(remotePC !== null){ preCitas = remotePC; localStorage.setItem('ce_v3_precitas',JSON.stringify(preCitas)); }
-    // Cargar registros
-    const remoteReg = await supaLoadConfig('registros');
-    if(remoteReg !== null){ registros = remoteReg; localStorage.setItem('ce_v3_registros',JSON.stringify(registros)); }
-    // Cargar precios
-    const remotePrecios = await supaLoadConfig('precios');
-    if(remotePrecios !== null){ preciosData = migratePrecios(remotePrecios)||preciosData; localStorage.setItem('ellePrecios2',JSON.stringify(preciosData)); }
-    // Cargar configuración (dirección, links Cal.com, etc.)
-    const remoteConfig = await supaLoadConfig('appConfig');
-    if(remoteConfig !== null){
-      appConfig = Object.assign({}, DEFAULT_CONFIG, remoteConfig);
-      localStorage.setItem('ce_v3_config', JSON.stringify(appConfig));
-      applyConfigToUI();
-    }
-    // Cargar checks de agendadas (compartidos entre dispositivos)
-    const agKey = _agendaCheckKey();
-    const remoteAgendadas = await supaLoadConfig('agendadas_'+agKey);
-    if(remoteAgendadas !== null){
-      localStorage.setItem(agKey, JSON.stringify(remoteAgendadas));
-    }
-    showToast('✅ Datos sincronizados','#6a8c5a');
-  }catch(e){
-    console.error('initFromSupabase error:',e);
-    showToast('! Sin conexión — usando datos locales','#e08000');
+  let syncOk = true;
+  // Cargar pacientes
+  const remotePatients = await supaLoadPatients();
+  if(remotePatients !== null && remotePatients.length >= 0){
+    patients = remotePatients;
+    try{ localStorage.setItem('ce_v3_patients', JSON.stringify(patients)); }catch(e){}
+  } else if(remotePatients === null){ syncOk = false; }
+  // Cargar preCitas
+  const remotePC = await supaLoadConfig('precitas');
+  if(remotePC !== null){ preCitas = remotePC; try{ localStorage.setItem('ce_v3_precitas',JSON.stringify(preCitas)); }catch(e){} }
+  // Cargar registros
+  const remoteReg = await supaLoadConfig('registros');
+  if(remoteReg !== null){ registros = remoteReg; try{ localStorage.setItem('ce_v3_registros',JSON.stringify(registros)); }catch(e){} }
+  // Cargar precios
+  const remotePrecios = await supaLoadConfig('precios');
+  if(remotePrecios !== null){ preciosData = migratePrecios(remotePrecios)||preciosData; try{ localStorage.setItem('ellePrecios2',JSON.stringify(preciosData)); }catch(e){} }
+  // Cargar configuración
+  const remoteConfig = await supaLoadConfig('appConfig');
+  if(remoteConfig !== null){
+    appConfig = Object.assign({}, DEFAULT_CONFIG, remoteConfig);
+    try{ localStorage.setItem('ce_v3_config', JSON.stringify(appConfig)); }catch(e){}
+    applyConfigToUI();
   }
+  // Cargar checks de agendadas
+  const agKey = _agendaCheckKey();
+  const remoteAgendadas = await supaLoadConfig('agendadas_'+agKey);
+  if(remoteAgendadas !== null){ try{ localStorage.setItem(agKey, JSON.stringify(remoteAgendadas)); }catch(e){} }
   renderAll();
+  if(syncOk){ showToast('✅ Datos sincronizados','#6a8c5a'); }
+  else{ showToast('! Sin conexión — usando datos locales','#e08000'); }
 }
 
 function save(){
