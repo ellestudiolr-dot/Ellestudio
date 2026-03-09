@@ -351,6 +351,10 @@ table.main-table tr:hover td{background:var(--cream);}
 .cubiculo-tag.c01{background:rgba(184,124,124,0.15);color:var(--rose-dark);}
 .cubiculo-tag.c02{background:rgba(90,104,64,0.12);color:#4a5530;}
 .cubiculo-tag.c03{background:rgba(35,122,74,0.12);color:#1a5c38;}
+.cub-select{padding:2px 6px 2px 8px;border-radius:12px;font-size:0.68rem;font-weight:600;letter-spacing:0.3px;border:none;cursor:pointer;outline:none;font-family:'DM Sans',sans-serif;appearance:auto;-webkit-appearance:auto;}
+.cub-select.c01{background:rgba(184,124,124,0.15);color:var(--rose-dark);}
+.cub-select.c02{background:rgba(90,104,64,0.12);color:#4a5530;}
+.cub-select.c03{background:rgba(35,122,74,0.12);color:#1a5c38;}
 @media(max-width:900px){#trkFiltersGrid{grid-template-columns:1fr 1fr!important;}}
 @media(max-width:580px){#trkFiltersGrid{grid-template-columns:1fr!important;}}
 
@@ -2803,7 +2807,11 @@ function renderSvcTabs(p){
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;">
         <div>
           <span style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;">${sv.servicio}</span>
-          ${cubTag(sv.cubiculo)}
+          <select class="cub-select c0${sv.cubiculo}" title="Editar cubículo" onclick="event.stopPropagation()" onchange="changeSvcCubiculo('${p.id}','${sv.id}',this.value,this)">
+            <option value="01" ${sv.cubiculo==='01'?'selected':''}>Cub. 01</option>
+            <option value="02" ${sv.cubiculo==='02'?'selected':''}>Cub. 02</option>
+            <option value="03" ${sv.cubiculo==='03'?'selected':''}>Cub. 03</option>
+          </select>
           <span class="badge" style="margin-left:4px;">${sv.plan}</span>
         </div>
         <div style="display:flex;gap:8px;align-items:center;">
@@ -2822,6 +2830,20 @@ function renderSvcTabs(p){
 function switchSvcTab(idx){
   document.querySelectorAll('.svc-tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   document.querySelectorAll('.svc-panel').forEach((p,i)=>p.classList.toggle('active',i===idx));
+}
+
+function changeSvcCubiculo(pid, svId, newCub, selectEl){
+  const p=patients.find(x=>String(x.id)===String(pid));
+  if(!p)return;
+  const sv=(p.servicios||[]).find(x=>String(x.id)===String(svId));
+  if(!sv)return;
+  sv.cubiculo=newCub;
+  savePatients();
+  // Actualiza el color del select sin re-renderizar todo
+  if(selectEl){selectEl.className='cub-select c0'+newCub;}
+  // Actualiza la pestaña del servicio
+  renderSvcTabs(p);
+  showToast('✅ Cubículo actualizado a Cub. '+newCub,'var(--sage-dark)');
 }
 
 function renderZones(p,sv,svi){
