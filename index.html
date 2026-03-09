@@ -2838,9 +2838,7 @@ function changeSvcCubiculo(pid, svId, newCub, selectEl){
   const sv=(p.servicios||[]).find(x=>String(x.id)===String(svId));
   if(!sv)return;
   sv.cubiculo=newCub;
-  savePatients();
-  // Actualiza el color del select sin re-renderizar todo
-  if(selectEl){selectEl.className='cub-select c0'+newCub;}
+  save();
   // Actualiza la pestaña del servicio
   renderSvcTabs(p);
   showToast('✅ Cubículo actualizado a Cub. '+newCub,'var(--sage-dark)');
