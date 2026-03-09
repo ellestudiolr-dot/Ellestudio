@@ -3878,7 +3878,7 @@ function quickWaSendWithPhone(pid,svId){
   if(!p)return;
   // Guardar teléfono en el perfil
   p.telefono=tel;
-  savePatients();
+  save();
   document.getElementById('quickWaPhoneModal').remove();
   showToast('📱 Teléfono guardado','#6a8c5a');
   _doQuickWa(p,svId);
