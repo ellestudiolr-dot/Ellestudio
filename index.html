@@ -355,6 +355,21 @@ table.main-table tr:hover td{background:var(--cream);}
 .cub-select.c01{background:rgba(184,124,124,0.15);color:var(--rose-dark);}
 .cub-select.c02{background:rgba(90,104,64,0.12);color:#4a5530;}
 .cub-select.c03{background:rgba(35,122,74,0.12);color:#1a5c38;}
+
+/* ── CONSENTIMIENTO ── */
+.consent-badge{display:inline-flex;align-items:center;gap:4px;background:#e6f4ea;border:1px solid #b8dfc0;color:#2e7d32;border-radius:20px;padding:2px 8px;font-size:0.65rem;font-weight:700;}
+.consent-badge.pending{background:#fff3e0;border-color:#ffe082;color:#c47a00;}
+#consentCanvas{border:2px dashed var(--border);border-radius:12px;cursor:crosshair;touch-action:none;display:block;background:white;}
+#consentCanvas.signed{border-color:#b8dfc0;border-style:solid;}
+.consent-text{font-size:0.82rem;line-height:1.7;color:var(--text);font-family:'DM Sans',sans-serif;}
+.consent-text h3{font-family:'Cormorant Garamond',serif;font-size:1.05rem;color:var(--rose-dark);margin:12px 0 6px;}
+.consent-text ul{padding-left:18px;margin:4px 0;}
+.consent-text li{margin-bottom:3px;}
+@media print{
+  body>*{display:none!important;}
+  #printConsentArea{display:block!important;padding:30px;font-family:'DM Sans',sans-serif;font-size:12px;}
+}
+#printConsentArea{display:none;}
 @media(max-width:900px){#trkFiltersGrid{grid-template-columns:1fr 1fr!important;}}
 @media(max-width:580px){#trkFiltersGrid{grid-template-columns:1fr!important;}}
 
@@ -1358,6 +1373,7 @@ Te esperamos hoy! &#10024;</div>
         <button class="btn btn-secondary" style="font-size:0.82rem;" onclick="openEditFromDetail()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Editar</button>
         <button class="btn btn-primary" style="font-size:0.82rem;" onclick="openAddSvcModal()">+ Servicio</button>
         <button class="btn btn-primary" style="font-size:0.82rem;background:linear-gradient(135deg,#5a7a3a,#2d4020);" onclick="openPagoDesdeDetalle()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v2m0 8v2m-4-7h8M8 13h8"/></svg> Registrar Pago</button>
+        <button class="btn btn-secondary" style="font-size:0.82rem;" id="btnConsentimiento" onclick="openConsentModal(currentPid)"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Consentimiento</button>
       </div>
       <!-- TABS DE SERVICIOS -->
       <div class="svc-tabs-row" id="svcTabsRow"></div>
@@ -1397,6 +1413,106 @@ Te esperamos hoy! &#10024;</div>
   </div>
 </div>
 
+
+<!-- MODAL CONSENTIMIENTO -->
+<div class="modal-overlay" id="consentModal" style="z-index:200000">
+  <div class="modal" style="max-width:680px;">
+    <div class="modal-header">
+      <div>
+        <h2>📋 Consentimiento Informado</h2>
+        <div id="consentPatientName" style="font-size:0.78rem;color:var(--gold-light);margin-top:2px;"></div>
+      </div>
+      <button class="close-btn" onclick="closeModal('consentModal')">✕</button>
+    </div>
+    <div class="modal-body" style="padding:20px 24px;">
+
+      <!-- Estado del consentimiento -->
+      <div id="consentStatusBar" style="margin-bottom:16px;"></div>
+
+      <!-- Texto del consentimiento -->
+      <div class="consent-text" style="max-height:340px;overflow-y:auto;padding:16px;background:var(--warm-white);border-radius:12px;border:1px solid var(--border);margin-bottom:20px;">
+        <div style="text-align:center;margin-bottom:14px;">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--rose-dark);">ELLE STUDIO</div>
+          <div style="font-size:0.72rem;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;">Av. Paz Soldán 235, San Isidro, Lima</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-top:8px;font-weight:500;">Consentimiento Informado para Tratamiento Estético</div>
+        </div>
+        <p>Yo, <strong id="consentNombrePaciente">[Paciente]</strong>, mayor de edad, declaro que he recibido información clara y comprensible sobre el tratamiento a realizarme en <strong>Elle Studio</strong> y que consiento voluntariamente su ejecución.</p>
+
+        <h3>📌 Información del Tratamiento</h3>
+        <ul>
+          <li>El tratamiento de <strong>Depilación Láser</strong> utiliza energía lumínica de alta intensidad para reducir el vello de forma progresiva y permanente.</li>
+          <li>Se requieren múltiples sesiones para lograr resultados óptimos (generalmente entre 6 y 8 sesiones).</li>
+          <li>Los resultados pueden variar según el tipo de piel, color del vello y respuesta individual de cada paciente.</li>
+          <li>Otros tratamientos estéticos (faciales, corporales) implican procedimientos específicos explicados en la consulta previa.</li>
+        </ul>
+
+        <h3>⚠️ Posibles Efectos Secundarios</h3>
+        <ul>
+          <li>Enrojecimiento y sensación de calor temporal en la zona tratada (24–48 horas).</li>
+          <li>Hiperpigmentación o hipopigmentación temporal, especialmente en fototipos altos.</li>
+          <li>Costras leves o ampollas en casos excepcionales.</li>
+          <li>Sensibilidad aumentada en la zona tratada durante los primeros días.</li>
+        </ul>
+
+        <h3>✅ Contraindicaciones — Declaro NO presentar</h3>
+        <ul>
+          <li>Embarazo o período de lactancia.</li>
+          <li>Uso actual de medicamentos fotosensibilizantes (isotretinoína, antibióticos, etc.).</li>
+          <li>Enfermedades cutáneas activas en la zona a tratar (herpes, psoriasis, eczema).</li>
+          <li>Exposición solar intensa o bronceado artificial en los últimos 15 días.</li>
+          <li>Marcapasos u otros implantes metálicos en la zona a tratar.</li>
+          <li>Antecedentes de queloides o cicatrización anormal.</li>
+        </ul>
+
+        <h3>📋 Cuidados Post-Tratamiento</h3>
+        <ul>
+          <li>Evitar exposición solar directa por 15 días y usar protector solar FPS 50+ diariamente.</li>
+          <li>No aplicar cremas irritantes, perfumes ni exfoliantes por 48 horas.</li>
+          <li>No depilarse con cera ni rasurado entre sesiones (solo rasurar si necesario).</li>
+          <li>Mantener la zona hidratada con crema suave.</li>
+          <li>Acudir a Elle Studio si se presentan reacciones inesperadas.</li>
+        </ul>
+
+        <div style="margin-top:16px;padding:12px;background:rgba(122,140,106,0.08);border-radius:8px;border-left:3px solid var(--sage);">
+          <strong>Autorización:</strong> Habiendo sido debidamente informada/o de los beneficios, riesgos y cuidados del tratamiento, <strong>autorizo voluntariamente a Elle Studio</strong> a realizarlo y confirmo que la información proporcionada es verídica.
+        </div>
+
+        <div style="margin-top:12px;font-size:0.75rem;color:var(--text-light);text-align:right;" id="consentFechaTexto"></div>
+      </div>
+
+      <!-- Firma -->
+      <div id="consentSignSection">
+        <div style="margin-bottom:8px;font-size:0.85rem;font-weight:600;color:var(--text);">✍️ Firma del / de la Paciente</div>
+        <div style="font-size:0.75rem;color:var(--text-light);margin-bottom:10px;">Firmar con el dedo en el área de abajo</div>
+        <canvas id="consentCanvas" width="600" height="180" style="width:100%;height:180px;"></canvas>
+        <div style="display:flex;gap:10px;margin-top:10px;justify-content:space-between;align-items:center;">
+          <button onclick="clearConsentCanvas()" style="padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-light);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">🗑 Limpiar</button>
+          <div style="display:flex;gap:8px;">
+            <button onclick="printConsent()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">🖨 Imprimir</button>
+            <button onclick="saveConsent()" style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,#7a8c6a,#3d4f30);color:white;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;">💾 Guardar Firma</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Vista firma guardada -->
+      <div id="consentViewSection" style="display:none;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
+          <div style="font-size:0.85rem;font-weight:600;color:#2e7d32;">✅ Consentimiento firmado</div>
+          <div style="display:flex;gap:8px;">
+            <button onclick="printConsent()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;">🖨 Imprimir</button>
+            <button onclick="resetConsentForResign()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--red);background:white;color:var(--red);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;">↺ Firmar de nuevo</button>
+          </div>
+        </div>
+        <img id="consentFirmaImg" style="width:100%;max-height:180px;object-fit:contain;border:1px solid var(--border);border-radius:10px;background:white;padding:10px;" src="" alt="Firma">
+        <div style="font-size:0.72rem;color:var(--text-light);margin-top:6px;text-align:right;" id="consentFechaGuardada"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Área de impresión de consentimiento (invisible) -->
+<div id="printConsentArea"></div>
 
 <!-- MODAL NUEVA ZONA -->
 <div class="modal-overlay" id="addZoneModal" style="z-index:200000">
@@ -2745,9 +2861,10 @@ function renderPatients(list){
           <span class="badge">${svcs.length} servicio${svcs.length!==1?'s':''}</span>
         </div>
         <div style="margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;">${nextDates}</div>
-        <div style="margin-top:6px;font-size:0.74rem;color:var(--text-light);display:flex;align-items:center;gap:8px;">
+        <div style="margin-top:6px;font-size:0.74rem;color:var(--text-light);display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
           <span>Inicio: ${fmtDate(p.fechaInicio)}</span>
           ${p.fotos&&p.fotos.length?`<span style="display:inline-flex;align-items:center;gap:3px;background:#f0f4ec;border-radius:20px;padding:2px 8px;font-size:0.68rem;color:#5a7a3a;font-weight:600;"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> ${p.fotos.length}</span>`:''}
+          ${p.consentimiento&&p.consentimiento.firmado?`<span class="consent-badge"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><polyline points="20 6 9 17 4 12"/></svg> Consentimiento</span>`:''}
         </div>
       </div>
       <div style="display:flex;gap:6px;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);">
@@ -2790,6 +2907,14 @@ function openDetail(id){
   document.getElementById('dName').textContent=`${p.nombre} ${p.apellido}`;
   document.getElementById('dInfo').textContent=`${p.telefono||'Sin teléfono'} · Inicio: ${fmtDate(p.fechaInicio)}`;
   renderSvcTabs(p);renderPhotos(p);
+  // Actualizar botón de consentimiento
+  const btnC = document.getElementById('btnConsentimiento');
+  if(btnC){
+    const signed = p.consentimiento && p.consentimiento.firmado;
+    btnC.style.color = signed ? 'var(--green)' : '';
+    btnC.style.borderColor = signed ? 'var(--green)' : '';
+    btnC.innerHTML = `<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> ${signed ? '✅ Firmado' : 'Consentimiento'}`;
+  }
   openModal('patientDetailModal');
 }
 
@@ -2842,6 +2967,165 @@ function changeSvcCubiculo(pid, svId, newCub, selectEl){
   // Actualiza la pestaña del servicio
   renderSvcTabs(p);
   showToast('✅ Cubículo actualizado a Cub. '+newCub,'var(--sage-dark)');
+}
+
+// ===== CONSENTIMIENTO INFORMADO =====
+let _consentPid = null;
+let _consentCanvas = null;
+let _consentCtx = null;
+let _consentDrawing = false;
+let _consentHasSig = false;
+let _consentLastX = 0;
+let _consentLastY = 0;
+
+function openConsentModal(pid){
+  _consentPid = pid;
+  const p = patients.find(x=>String(x.id)===String(pid));
+  if(!p) return;
+
+  document.getElementById('consentPatientName').textContent = p.nombre + ' ' + p.apellido;
+  document.getElementById('consentNombrePaciente').textContent = p.nombre + ' ' + p.apellido;
+
+  const hoy = new Date();
+  const fechaStr = hoy.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  document.getElementById('consentFechaTexto').textContent = 'Lima, ' + fechaStr;
+
+  // Inicializar canvas
+  setTimeout(()=>{
+    _consentCanvas = document.getElementById('consentCanvas');
+    _consentCtx = _consentCanvas.getContext('2d');
+    _consentCtx.strokeStyle = '#1c1c17';
+    _consentCtx.lineWidth = 2.5;
+    _consentCtx.lineCap = 'round';
+    _consentCtx.lineJoin = 'round';
+    _initConsentCanvas();
+  }, 100);
+
+  // Ver si ya está firmado
+  if(p.consentimiento && p.consentimiento.firmado){
+    _showConsentSigned(p.consentimiento);
+    _updateConsentBtn(true);
+  } else {
+    document.getElementById('consentSignSection').style.display = 'block';
+    document.getElementById('consentViewSection').style.display = 'none';
+    document.getElementById('consentStatusBar').innerHTML = '<span class="consent-badge pending">⏳ Pendiente de firma</span>';
+    _updateConsentBtn(false);
+  }
+
+  document.getElementById('consentModal').classList.add('open');
+}
+
+function _updateConsentBtn(signed){
+  const btn = document.getElementById('btnConsentimiento');
+  if(!btn) return;
+  btn.textContent = signed ? '✅ Consentimiento' : '📋 Consentimiento';
+  btn.style.color = signed ? 'var(--green)' : '';
+  btn.style.borderColor = signed ? 'var(--green)' : '';
+}
+
+function _showConsentSigned(c){
+  document.getElementById('consentSignSection').style.display = 'none';
+  document.getElementById('consentViewSection').style.display = 'block';
+  document.getElementById('consentFirmaImg').src = c.firma;
+  const d = new Date(c.fecha);
+  document.getElementById('consentFechaGuardada').textContent =
+    'Firmado el ' + d.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'}) +
+    ' a las ' + d.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('consentStatusBar').innerHTML = '<span class="consent-badge">✅ Consentimiento firmado</span>';
+}
+
+function _initConsentCanvas(){
+  if(!_consentCanvas) return;
+  _consentHasSig = false;
+
+  // Mouse events
+  _consentCanvas.onmousedown = e => { _consentDrawing=true; const r=_consentCanvas.getBoundingClientRect(); _consentLastX=(e.clientX-r.left)*(_consentCanvas.width/r.width); _consentLastY=(e.clientY-r.top)*(_consentCanvas.height/r.height); };
+  _consentCanvas.onmousemove = e => { if(!_consentDrawing)return; const r=_consentCanvas.getBoundingClientRect(); const x=(e.clientX-r.left)*(_consentCanvas.width/r.width); const y=(e.clientY-r.top)*(_consentCanvas.height/r.height); _consentDraw(x,y); };
+  _consentCanvas.onmouseup = () => { _consentDrawing=false; };
+  _consentCanvas.onmouseleave = () => { _consentDrawing=false; };
+
+  // Touch events (tablet)
+  _consentCanvas.ontouchstart = e => { e.preventDefault(); _consentDrawing=true; const r=_consentCanvas.getBoundingClientRect(); const t=e.touches[0]; _consentLastX=(t.clientX-r.left)*(_consentCanvas.width/r.width); _consentLastY=(t.clientY-r.top)*(_consentCanvas.height/r.height); };
+  _consentCanvas.ontouchmove = e => { e.preventDefault(); if(!_consentDrawing)return; const r=_consentCanvas.getBoundingClientRect(); const t=e.touches[0]; const x=(t.clientX-r.left)*(_consentCanvas.width/r.width); const y=(t.clientY-r.top)*(_consentCanvas.height/r.height); _consentDraw(x,y); };
+  _consentCanvas.ontouchend = () => { _consentDrawing=false; };
+}
+
+function _consentDraw(x,y){
+  _consentCtx.beginPath();
+  _consentCtx.moveTo(_consentLastX, _consentLastY);
+  _consentCtx.lineTo(x, y);
+  _consentCtx.stroke();
+  _consentLastX = x; _consentLastY = y;
+  _consentHasSig = true;
+  _consentCanvas.classList.add('signed');
+}
+
+function clearConsentCanvas(){
+  if(!_consentCtx) return;
+  _consentCtx.clearRect(0,0,_consentCanvas.width,_consentCanvas.height);
+  _consentHasSig = false;
+  _consentCanvas.classList.remove('signed');
+}
+
+function saveConsent(){
+  if(!_consentHasSig){ showToast('⚠️ Dibuja la firma primero','#c47a00'); return; }
+  const p = patients.find(x=>String(x.id)===String(_consentPid));
+  if(!p) return;
+  const firmaBase64 = _consentCanvas.toDataURL('image/png');
+  p.consentimiento = { firmado: true, fecha: new Date().toISOString(), firma: firmaBase64 };
+  save();
+  renderPatients();
+  _showConsentSigned(p.consentimiento);
+  _updateConsentBtn(true);
+  showToast('✅ Consentimiento guardado','var(--sage-dark)');
+}
+
+function resetConsentForResign(){
+  if(!confirm('¿Borrar la firma actual y volver a firmar?')) return;
+  const p = patients.find(x=>String(x.id)===String(_consentPid));
+  if(p){ delete p.consentimiento; save(); renderPatients(); }
+  document.getElementById('consentSignSection').style.display = 'block';
+  document.getElementById('consentViewSection').style.display = 'none';
+  document.getElementById('consentStatusBar').innerHTML = '<span class="consent-badge pending">⏳ Pendiente de firma</span>';
+  _updateConsentBtn(false);
+  setTimeout(()=>{ clearConsentCanvas(); _initConsentCanvas(); }, 100);
+}
+
+function printConsent(){
+  const p = patients.find(x=>String(x.id)===String(_consentPid));
+  const nombre = p ? p.nombre+' '+p.apellido : '';
+  const hoy = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  const firmaHtml = (p&&p.consentimiento&&p.consentimiento.firma)
+    ? `<img src="${p.consentimiento.firma}" style="width:280px;height:90px;object-fit:contain;border:1px solid #ccc;border-radius:6px;padding:4px;">`
+    : '<div style="width:280px;height:60px;border-bottom:1px solid #333;"></div>';
+  const area = document.getElementById('printConsentArea');
+  area.innerHTML = `
+    <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;padding:30px 40px;font-size:12px;color:#1c1c17;">
+      <div style="text-align:center;margin-bottom:20px;">
+        <div style="font-size:22px;font-weight:700;letter-spacing:3px;">ELLE STUDIO</div>
+        <div style="font-size:10px;color:#666;margin-top:2px;">Av. Paz Soldán 235, San Isidro, Lima, Perú</div>
+        <div style="font-size:14px;font-weight:600;margin-top:10px;border-bottom:2px solid #3d4f30;padding-bottom:6px;">CONSENTIMIENTO INFORMADO PARA TRATAMIENTO ESTÉTICO</div>
+      </div>
+      <p>Yo, <strong>${nombre}</strong>, mayor de edad, declaro haber recibido información clara sobre el tratamiento a realizarme en <strong>Elle Studio</strong> y consiento voluntariamente su ejecución.</p>
+      <p><strong>Información del Tratamiento:</strong> La Depilación Láser utiliza energía lumínica para reducir el vello de forma progresiva. Se requieren múltiples sesiones y los resultados varían según cada paciente.</p>
+      <p><strong>Efectos secundarios posibles:</strong> Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal.</p>
+      <p><strong>Contraindicaciones (declaro NO presentar):</strong> Embarazo/lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.</p>
+      <p><strong>Cuidados post-tratamiento:</strong> Evitar sol 15 días, usar FPS 50+, no cera entre sesiones, mantener zona hidratada.</p>
+      <p style="margin-top:14px;padding:10px;background:#f5f5f0;border-left:3px solid #3d4f30;border-radius:4px;">Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a Elle Studio</strong> a realizar el tratamiento acordado y confirmo que la información proporcionada es verídica.</p>
+      <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:flex-end;">
+        <div>
+          <div style="margin-bottom:6px;">Firma de la Paciente:</div>
+          ${firmaHtml}
+          <div style="margin-top:4px;font-size:10px;color:#666;">${nombre}</div>
+        </div>
+        <div style="text-align:right;">
+          <div>Lima, ${hoy}</div>
+          <div style="margin-top:20px;">___________________________</div>
+          <div style="font-size:10px;color:#666;">Profesional Elle Studio</div>
+        </div>
+      </div>
+    </div>`;
+  window.print();
 }
 
 function renderZones(p,sv,svi){
