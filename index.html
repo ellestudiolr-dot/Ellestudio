@@ -1855,12 +1855,12 @@ async function initFromSupabase(){
     if(remoteAgendadas !== null){
       localStorage.setItem(agKey, JSON.stringify(remoteAgendadas));
     }
-    renderAll();
     showToast('✅ Datos sincronizados','#6a8c5a');
   }catch(e){
     console.error('initFromSupabase error:',e);
     showToast('! Sin conexión — usando datos locales','#e08000');
   }
+  renderAll();
 }
 
 function save(){
