@@ -4534,9 +4534,13 @@ document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click
 
 // ===== LOGIN & ROLES SYSTEM =====
 const PASSWORDS = {
-  admin: 'elle2024admin',   // Contraseña administradora
-  worker: 'elle2024'        // Contraseña trabajadoras
+  admin: '1da0213d358278bd1b24aa0cc74b349aa41b5a05f1990d17de73d03b28a0cff0',
+  worker: '6fcfa01f21999ded41ab018ec6ed468b122d20ff487c6382cbe434ae6c5b3a80'
 };
+async function hashPw(str){
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
 
 let currentRole = null;
 let _selectedRole = null;
@@ -4560,10 +4564,11 @@ function backToRoles() {
   document.getElementById('loginError').style.display = 'none';
 }
 
-function doLogin() {
+async function doLogin() {
   const pw = document.getElementById('loginPwInput').value.trim();
   const errEl = document.getElementById('loginError');
-  if (pw === PASSWORDS[_selectedRole]) {
+  const hashed = await hashPw(pw);
+  if (hashed === PASSWORDS[_selectedRole]) {
     currentRole = _selectedRole;
     localStorage.setItem('es_session_role', currentRole);
     localStorage.removeItem('es_role'); // limpiar el viejo
