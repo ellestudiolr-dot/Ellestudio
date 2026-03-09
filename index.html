@@ -1430,54 +1430,8 @@ Te esperamos hoy! &#10024;</div>
       <div id="consentStatusBar" style="margin-bottom:16px;"></div>
 
       <!-- Texto del consentimiento -->
-      <div class="consent-text" style="max-height:340px;overflow-y:auto;padding:16px;background:var(--warm-white);border-radius:12px;border:1px solid var(--border);margin-bottom:20px;">
-        <div style="text-align:center;margin-bottom:14px;">
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--rose-dark);">ELLE STUDIO</div>
-          <div style="font-size:0.72rem;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;">Av. Paz Soldán 235, San Isidro, Lima</div>
-          <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-top:8px;font-weight:500;">Consentimiento Informado para Tratamiento Estético</div>
-        </div>
-        <p>Yo, <strong id="consentNombrePaciente">[Paciente]</strong>, mayor de edad, declaro que he recibido información clara y comprensible sobre el tratamiento a realizarme en <strong>Elle Studio</strong> y que consiento voluntariamente su ejecución.</p>
-
-        <h3>📌 Información del Tratamiento</h3>
-        <ul>
-          <li>El tratamiento de <strong>Depilación Láser</strong> utiliza energía lumínica de alta intensidad para reducir el vello de forma progresiva y permanente.</li>
-          <li>Se requieren múltiples sesiones para lograr resultados óptimos (generalmente entre 6 y 8 sesiones).</li>
-          <li>Los resultados pueden variar según el tipo de piel, color del vello y respuesta individual de cada paciente.</li>
-          <li>Otros tratamientos estéticos (faciales, corporales) implican procedimientos específicos explicados en la consulta previa.</li>
-        </ul>
-
-        <h3>⚠️ Posibles Efectos Secundarios</h3>
-        <ul>
-          <li>Enrojecimiento y sensación de calor temporal en la zona tratada (24–48 horas).</li>
-          <li>Hiperpigmentación o hipopigmentación temporal, especialmente en fototipos altos.</li>
-          <li>Costras leves o ampollas en casos excepcionales.</li>
-          <li>Sensibilidad aumentada en la zona tratada durante los primeros días.</li>
-        </ul>
-
-        <h3>✅ Contraindicaciones — Declaro NO presentar</h3>
-        <ul>
-          <li>Embarazo o período de lactancia.</li>
-          <li>Uso actual de medicamentos fotosensibilizantes (isotretinoína, antibióticos, etc.).</li>
-          <li>Enfermedades cutáneas activas en la zona a tratar (herpes, psoriasis, eczema).</li>
-          <li>Exposición solar intensa o bronceado artificial en los últimos 15 días.</li>
-          <li>Marcapasos u otros implantes metálicos en la zona a tratar.</li>
-          <li>Antecedentes de queloides o cicatrización anormal.</li>
-        </ul>
-
-        <h3>📋 Cuidados Post-Tratamiento</h3>
-        <ul>
-          <li>Evitar exposición solar directa por 15 días y usar protector solar FPS 50+ diariamente.</li>
-          <li>No aplicar cremas irritantes, perfumes ni exfoliantes por 48 horas.</li>
-          <li>No depilarse con cera ni rasurado entre sesiones (solo rasurar si necesario).</li>
-          <li>Mantener la zona hidratada con crema suave.</li>
-          <li>Acudir a Elle Studio si se presentan reacciones inesperadas.</li>
-        </ul>
-
-        <div style="margin-top:16px;padding:12px;background:rgba(122,140,106,0.08);border-radius:8px;border-left:3px solid var(--sage);">
-          <strong>Autorización:</strong> Habiendo sido debidamente informada/o de los beneficios, riesgos y cuidados del tratamiento, <strong>autorizo voluntariamente a Elle Studio</strong> a realizarlo y confirmo que la información proporcionada es verídica.
-        </div>
-
-        <div style="margin-top:12px;font-size:0.75rem;color:var(--text-light);text-align:right;" id="consentFechaTexto"></div>
+      <div class="consent-text" style="max-height:340px;overflow-y:auto;padding:16px;background:var(--warm-white);border-radius:12px;border:1px solid var(--border);margin-bottom:20px;" id="consentTextBody">
+        <!-- Se renderiza dinámicamente -->
       </div>
 
       <!-- Firma -->
@@ -1573,6 +1527,20 @@ Te esperamos hoy! &#10024;</div>
         <div id="servicesList" style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;"></div>
         <button class="btn btn-secondary" onclick="addServiceRow()" style="font-size:0.82rem;width:100%;justify-content:center;border-style:dashed;">+ Agregar servicio</button>
       </div>
+      <!-- TEXTO CONSENTIMIENTO -->
+      <div style="padding-top:18px;border-top:1px solid var(--border);margin-top:8px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:500;margin-bottom:4px;color:var(--rose-dark);">📋 Texto del Consentimiento Informado</div>
+        <div style="font-size:0.78rem;color:var(--text-light);margin-bottom:10px;">Pega aquí el texto exacto que te dio tu abogado. Se mostrará tal cual en el formulario que firma la paciente.</div>
+        <textarea id="cfg-consentText" rows="12" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.82rem;resize:vertical;line-height:1.6;color:var(--text);outline:none;background:white;" placeholder="Pega aquí el texto legal completo del consentimiento informado que te proporcionó tu abogado...
+
+Ejemplo:
+Yo, [Nombre], mayor de edad...
+...
+
+Puedes usar [Nombre] para que el nombre de la paciente se inserte automáticamente."></textarea>
+        <div style="font-size:0.72rem;color:var(--text-light);margin-top:6px;">💡 Usa <strong>[Nombre]</strong> donde quieras que aparezca el nombre de la paciente automáticamente.</div>
+      </div>
+
       <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:18px;border-top:1px solid var(--border);">
         <button class="btn btn-secondary" onclick="closeModal('settingsModal')">Cancelar</button>
         <button class="btn btn-primary" onclick="saveSettings()">💾 Guardar cambios</button>
@@ -2984,11 +2952,43 @@ function openConsentModal(pid){
   if(!p) return;
 
   document.getElementById('consentPatientName').textContent = p.nombre + ' ' + p.apellido;
-  document.getElementById('consentNombrePaciente').textContent = p.nombre + ' ' + p.apellido;
 
   const hoy = new Date();
   const fechaStr = hoy.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
-  document.getElementById('consentFechaTexto').textContent = 'Lima, ' + fechaStr;
+
+  // Renderizar texto: personalizado del abogado o el texto por defecto
+  const textBody = document.getElementById('consentTextBody');
+  if(appConfig.consentimientoTexto && appConfig.consentimientoTexto.trim()){
+    // Texto personalizado: reemplaza [Nombre] y muestra como texto plano formateado
+    const textoFinal = appConfig.consentimientoTexto.replace(/\[Nombre\]/g, `<strong>${p.nombre} ${p.apellido}</strong>`);
+    textBody.innerHTML = `
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--rose-dark);">${appConfig.studioName||'ELLE STUDIO'}</div>
+        <div style="font-size:0.72rem;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;">${appConfig.address||''}</div>
+      </div>
+      <div style="white-space:pre-wrap;line-height:1.75;">${textoFinal}</div>
+      <div style="margin-top:12px;font-size:0.75rem;color:var(--text-light);text-align:right;">Lima, ${fechaStr}</div>`;
+  } else {
+    // Texto por defecto (provisional hasta que el abogado entregue el texto)
+    textBody.innerHTML = `
+      <div style="text-align:center;margin-bottom:14px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--rose-dark);">ELLE STUDIO</div>
+        <div style="font-size:0.72rem;color:var(--text-light);letter-spacing:2px;text-transform:uppercase;">Av. Paz Soldán 235, San Isidro, Lima</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;margin-top:8px;font-weight:500;">Consentimiento Informado para Tratamiento Estético</div>
+      </div>
+      <p>Yo, <strong>${p.nombre} ${p.apellido}</strong>, mayor de edad, declaro que he recibido información clara y comprensible sobre el tratamiento a realizarme en <strong>Elle Studio</strong> y que consiento voluntariamente su ejecución.</p>
+      <h3>📌 Información del Tratamiento</h3>
+      <ul><li>El tratamiento de <strong>Depilación Láser</strong> utiliza energía lumínica de alta intensidad para reducir el vello de forma progresiva y permanente.</li><li>Se requieren múltiples sesiones para lograr resultados óptimos (generalmente entre 6 y 8 sesiones).</li><li>Los resultados pueden variar según el tipo de piel, color del vello y respuesta individual de cada paciente.</li></ul>
+      <h3>⚠️ Posibles Efectos Secundarios</h3>
+      <ul><li>Enrojecimiento y sensación de calor temporal en la zona tratada (24–48 horas).</li><li>Hiperpigmentación o hipopigmentación temporal.</li><li>Costras leves o ampollas en casos excepcionales.</li><li>Sensibilidad aumentada en la zona tratada durante los primeros días.</li></ul>
+      <h3>✅ Contraindicaciones — Declaro NO presentar</h3>
+      <ul><li>Embarazo o período de lactancia.</li><li>Uso actual de medicamentos fotosensibilizantes.</li><li>Enfermedades cutáneas activas en la zona a tratar.</li><li>Exposición solar intensa o bronceado artificial en los últimos 15 días.</li><li>Marcapasos u otros implantes metálicos en la zona a tratar.</li></ul>
+      <h3>📋 Cuidados Post-Tratamiento</h3>
+      <ul><li>Evitar exposición solar directa por 15 días y usar protector solar FPS 50+.</li><li>No aplicar cremas irritantes, perfumes ni exfoliantes por 48 horas.</li><li>No depilarse con cera entre sesiones.</li><li>Mantener la zona hidratada con crema suave.</li></ul>
+      <div style="margin-top:16px;padding:12px;background:rgba(122,140,106,0.08);border-radius:8px;border-left:3px solid var(--sage);"><strong>Autorización:</strong> Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a Elle Studio</strong> a realizar el tratamiento acordado.</div>
+      <div style="margin-top:8px;font-size:0.72rem;color:#c47a00;background:#fff3e0;padding:8px 12px;border-radius:8px;">⚠️ Texto provisional — Ve a <strong>Configuración → Texto del Consentimiento</strong> para pegar el texto exacto de tu abogado.</div>
+      <div style="margin-top:8px;font-size:0.75rem;color:var(--text-light);text-align:right;">Lima, ${fechaStr}</div>`;
+  }
 
   // Inicializar canvas
   setTimeout(()=>{
@@ -3099,19 +3099,23 @@ function printConsent(){
     ? `<img src="${p.consentimiento.firma}" style="width:280px;height:90px;object-fit:contain;border:1px solid #ccc;border-radius:6px;padding:4px;">`
     : '<div style="width:280px;height:60px;border-bottom:1px solid #333;"></div>';
   const area = document.getElementById('printConsentArea');
+  const studioName = appConfig.studioName || 'ELLE STUDIO';
+  const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
+  let cuerpoTexto = '';
+  if(appConfig.consentimientoTexto && appConfig.consentimientoTexto.trim()){
+    const t = appConfig.consentimientoTexto.replace(/\[Nombre\]/g,`<strong>${nombre}</strong>`);
+    cuerpoTexto = `<div style="white-space:pre-wrap;line-height:1.8;">${t}</div>`;
+  } else {
+    cuerpoTexto = `<p>Yo, <strong>${nombre}</strong>, mayor de edad, declaro haber recibido información clara sobre el tratamiento a realizarme en <strong>${studioName}</strong> y consiento voluntariamente su ejecución.</p><p><strong>Información del Tratamiento:</strong> La Depilación Láser utiliza energía lumínica para reducir el vello de forma progresiva. Se requieren múltiples sesiones y los resultados varían según cada paciente.</p><p><strong>Efectos secundarios posibles:</strong> Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal.</p><p><strong>Contraindicaciones (declaro NO presentar):</strong> Embarazo/lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.</p><p><strong>Cuidados post-tratamiento:</strong> Evitar sol 15 días, usar FPS 50+, no cera entre sesiones, mantener zona hidratada.</p><p style="margin-top:14px;padding:10px;background:#f5f5f0;border-left:3px solid #3d4f30;">Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a ${studioName}</strong> a realizar el tratamiento acordado.</p>`;
+  }
   area.innerHTML = `
     <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;padding:30px 40px;font-size:12px;color:#1c1c17;">
       <div style="text-align:center;margin-bottom:20px;">
-        <div style="font-size:22px;font-weight:700;letter-spacing:3px;">ELLE STUDIO</div>
-        <div style="font-size:10px;color:#666;margin-top:2px;">Av. Paz Soldán 235, San Isidro, Lima, Perú</div>
+        <div style="font-size:22px;font-weight:700;letter-spacing:3px;">${studioName}</div>
+        <div style="font-size:10px;color:#666;margin-top:2px;">${studioAddr}</div>
         <div style="font-size:14px;font-weight:600;margin-top:10px;border-bottom:2px solid #3d4f30;padding-bottom:6px;">CONSENTIMIENTO INFORMADO PARA TRATAMIENTO ESTÉTICO</div>
       </div>
-      <p>Yo, <strong>${nombre}</strong>, mayor de edad, declaro haber recibido información clara sobre el tratamiento a realizarme en <strong>Elle Studio</strong> y consiento voluntariamente su ejecución.</p>
-      <p><strong>Información del Tratamiento:</strong> La Depilación Láser utiliza energía lumínica para reducir el vello de forma progresiva. Se requieren múltiples sesiones y los resultados varían según cada paciente.</p>
-      <p><strong>Efectos secundarios posibles:</strong> Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal.</p>
-      <p><strong>Contraindicaciones (declaro NO presentar):</strong> Embarazo/lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.</p>
-      <p><strong>Cuidados post-tratamiento:</strong> Evitar sol 15 días, usar FPS 50+, no cera entre sesiones, mantener zona hidratada.</p>
-      <p style="margin-top:14px;padding:10px;background:#f5f5f0;border-left:3px solid #3d4f30;border-radius:4px;">Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a Elle Studio</strong> a realizar el tratamiento acordado y confirmo que la información proporcionada es verídica.</p>
+      ${cuerpoTexto}
       <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:flex-end;">
         <div>
           <div style="margin-bottom:6px;">Firma de la Paciente:</div>
@@ -4194,6 +4198,7 @@ function openSettings(){
   document.getElementById('cfg-name').value=appConfig.studioName;
   document.getElementById('cfg-address').value=appConfig.address;
   document.getElementById('cfg-calLaser').value=appConfig.calLaser;
+  const ct=document.getElementById('cfg-consentText'); if(ct)ct.value=appConfig.consentimientoTexto||'';
   document.getElementById('cfg-calOtros').value=appConfig.calOtros;
   document.getElementById('cfg-calOtros2').value=appConfig.calOtros2||CAL_LINKS.cal03;
   const eu=document.getElementById('calEmbedUrl'); if(eu)eu.value=appConfig.calEmbedUrl||'';
@@ -4220,6 +4225,8 @@ function saveSettings(){
   appConfig.calEmbedCal02=(document.getElementById('calEmbedCal02')?.value||'').trim();
   appConfig.calEmbedCal03=(document.getElementById('calEmbedCal03')?.value||'').trim();
   appConfig.services=svcs;
+  const ctEl=document.getElementById('cfg-consentText');
+  if(ctEl) appConfig.consentimientoTexto=ctEl.value.trim();
   saveConfig();
   // Guardar configuración también en Supabase para sincronizar entre dispositivos
   supa.from('config').upsert({key:'appConfig',value:appConfig,updated_at:new Date().toISOString()}).then(({error})=>{
