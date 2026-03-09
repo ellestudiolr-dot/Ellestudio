@@ -3079,9 +3079,7 @@ function saveConsent(){
   renderPatients();
   _showConsentSigned(p.consentimiento);
   _updateConsentBtn(true);
-  showToast('✅ Consentimiento guardado','var(--sage-dark)');
-  // Descarga automática del PDF al guardar
-  setTimeout(()=>downloadConsent(), 400);
+  showToast('✅ Consentimiento guardado — usa ⬇️ para descargar el PDF','var(--sage-dark)');
 }
 
 function resetConsentForResign(){
