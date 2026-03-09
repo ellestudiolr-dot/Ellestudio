@@ -13,6 +13,7 @@
 <link rel="manifest" id="pwaManifest">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
 <style>
 :root{
   --rose:#7a8c6a;--rose-light:#dde5d8;--rose-dark:#3d4f30;
@@ -1441,7 +1442,7 @@ Te esperamos hoy! &#10024;</div>
         <canvas id="consentCanvas" width="600" height="180" style="width:100%;height:180px;"></canvas>
         <div style="display:flex;gap:10px;margin-top:10px;justify-content:space-between;align-items:center;">
           <button onclick="clearConsentCanvas()" style="padding:7px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text-light);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">🗑 Limpiar</button>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
             <button onclick="printConsent()" style="padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.82rem;cursor:pointer;">🖨 Imprimir</button>
             <button onclick="saveConsent()" style="padding:8px 20px;border-radius:8px;border:none;background:linear-gradient(135deg,#7a8c6a,#3d4f30);color:white;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;">💾 Guardar Firma</button>
           </div>
@@ -1452,7 +1453,8 @@ Te esperamos hoy! &#10024;</div>
       <div id="consentViewSection" style="display:none;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;">
           <div style="font-size:0.85rem;font-weight:600;color:#2e7d32;">✅ Consentimiento firmado</div>
-          <div style="display:flex;gap:8px;">
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button onclick="downloadConsent()" style="padding:7px 14px;border-radius:8px;border:none;background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:white;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:600;cursor:pointer;">⬇️ Descargar PDF</button>
             <button onclick="printConsent()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;">🖨 Imprimir</button>
             <button onclick="resetConsentForResign()" style="padding:7px 14px;border-radius:8px;border:1px solid var(--red);background:white;color:var(--red);font-family:'DM Sans',sans-serif;font-size:0.8rem;cursor:pointer;">↺ Firmar de nuevo</button>
           </div>
@@ -3078,6 +3080,8 @@ function saveConsent(){
   _showConsentSigned(p.consentimiento);
   _updateConsentBtn(true);
   showToast('✅ Consentimiento guardado','var(--sage-dark)');
+  // Descarga automática del PDF al guardar
+  setTimeout(()=>downloadConsent(), 400);
 }
 
 function resetConsentForResign(){
@@ -3130,6 +3134,109 @@ function printConsent(){
       </div>
     </div>`;
   window.print();
+}
+
+function downloadConsent(){
+  const p = patients.find(x=>String(x.id)===String(_consentPid));
+  if(!p){ showToast('Error: paciente no encontrada','#c46060'); return; }
+  if(!p.consentimiento || !p.consentimiento.firma){
+    showToast('⚠️ Guarda la firma primero','#c47a00'); return;
+  }
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  const W = doc.internal.pageSize.getWidth();
+  const margin = 20;
+  const maxW = W - margin * 2;
+  let y = 20;
+
+  const studioName = appConfig.studioName || 'ELLE STUDIO';
+  const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
+  const nombre = p.nombre + ' ' + p.apellido;
+  const hoy = new Date(p.consentimiento.fecha);
+  const fechaStr = hoy.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  const horaStr = hoy.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+
+  // Encabezado
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(18);
+  doc.setTextColor(60,79,48);
+  doc.text(studioName.toUpperCase(), W/2, y, {align:'center'});
+  y += 6;
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.setTextColor(100,100,80);
+  doc.text(studioAddr, W/2, y, {align:'center'});
+  y += 8;
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(12);
+  doc.setTextColor(30,30,23);
+  doc.text('CONSENTIMIENTO INFORMADO PARA TRATAMIENTO ESTÉTICO', W/2, y, {align:'center'});
+  y += 3;
+  doc.setDrawColor(60,79,48);
+  doc.setLineWidth(0.5);
+  doc.line(margin, y, W-margin, y);
+  y += 8;
+
+  // Cuerpo del texto
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.setTextColor(30,30,23);
+
+  let textoConsentimiento = '';
+  if(appConfig.consentimientoTexto && appConfig.consentimientoTexto.trim()){
+    textoConsentimiento = appConfig.consentimientoTexto.replace(/\[Nombre\]/g, nombre);
+  } else {
+    textoConsentimiento = `Yo, ${nombre}, mayor de edad, declaro que he recibido información clara y comprensible sobre el tratamiento a realizarme en ${studioName} y que consiento voluntariamente su ejecución.\n\nINFORMACIÓN DEL TRATAMIENTO: El tratamiento de Depilación Láser utiliza energía lumínica de alta intensidad para reducir el vello de forma progresiva y permanente. Se requieren múltiples sesiones y los resultados varían según cada paciente.\n\nEFECTOS SECUNDARIOS POSIBLES: Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal en la zona tratada.\n\nCONTRAINDICACIONES (declaro NO presentar): Embarazo o lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.\n\nCUIDADOS POST-TRATAMIENTO: Evitar exposición solar 15 días, usar protector solar FPS 50+, no depilación con cera entre sesiones, mantener zona hidratada.\n\nAUTORIZACIÓN: Habiendo sido debidamente informada/o de los beneficios, riesgos y cuidados del tratamiento, autorizo voluntariamente a ${studioName} a realizarlo y confirmo que la información proporcionada es verídica.`;
+  }
+
+  const lineas = doc.splitTextToSize(textoConsentimiento, maxW);
+  lineas.forEach(linea => {
+    if(y > 240){ doc.addPage(); y = 20; }
+    doc.text(linea, margin, y);
+    y += linea === '' ? 3 : 5.5;
+  });
+
+  y += 8;
+  // Línea separadora antes de firma
+  doc.setDrawColor(200,200,190);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, W-margin, y);
+  y += 8;
+
+  // Firma
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(10);
+  doc.setTextColor(60,79,48);
+  doc.text('Firma de la Paciente:', margin, y);
+  y += 4;
+
+  try {
+    const firmaImg = p.consentimiento.firma;
+    doc.addImage(firmaImg, 'PNG', margin, y, 70, 28, '', 'FAST');
+  } catch(e){ console.error('Error firma PDF:',e); }
+  y += 30;
+
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(9);
+  doc.setTextColor(100,100,80);
+  doc.text(nombre, margin, y);
+  y += 5;
+  doc.text(`Firmado el ${fechaStr} a las ${horaStr}`, margin, y);
+
+  // Pie de página
+  const totalPages = doc.internal.getNumberOfPages();
+  for(let i=1; i<=totalPages; i++){
+    doc.setPage(i);
+    doc.setFont('helvetica','normal');
+    doc.setFontSize(8);
+    doc.setTextColor(160,160,140);
+    doc.text(`${studioName} · Documento Legal · Pág. ${i}/${totalPages}`, W/2, 290, {align:'center'});
+  }
+
+  const nombreArchivo = `Consentimiento_${p.nombre}_${p.apellido}_${hoy.toISOString().split('T')[0]}.pdf`.replace(/\s+/g,'_');
+  doc.save(nombreArchivo);
+  showToast('✅ PDF descargado','var(--sage-dark)');
 }
 
 function renderZones(p,sv,svi){
