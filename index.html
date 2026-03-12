@@ -3095,7 +3095,6 @@ function resetConsentForResign(){
 
 function printConsent(){
   const p = patients.find(x=>String(x.id)===String(_consentPid));
-  const nombre = p ? p.nombre+' '+p.apellido : '';
   const hoy = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const firmaHtml = (p&&p.consentimiento&&p.consentimiento.firma)
     ? `<img src="${p.consentimiento.firma}" style="width:280px;height:90px;object-fit:contain;border:1px solid #ccc;border-radius:6px;padding:4px;">`
@@ -3103,26 +3102,55 @@ function printConsent(){
   const area = document.getElementById('printConsentArea');
   const studioName = appConfig.studioName || 'ELLE STUDIO';
   const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
-  let cuerpoTexto = '';
-  if(appConfig.consentimientoTexto && appConfig.consentimientoTexto.trim()){
-    const t = appConfig.consentimientoTexto.replace(/\[Nombre\]/g,`<strong>${nombre}</strong>`);
-    cuerpoTexto = `<div style="white-space:pre-wrap;line-height:1.8;">${t}</div>`;
-  } else {
-    cuerpoTexto = `<p>Yo, <strong>${nombre}</strong>, mayor de edad, declaro haber recibido información clara sobre el tratamiento a realizarme en <strong>${studioName}</strong> y consiento voluntariamente su ejecución.</p><p><strong>Información del Tratamiento:</strong> La Depilación Láser utiliza energía lumínica para reducir el vello de forma progresiva. Se requieren múltiples sesiones y los resultados varían según cada paciente.</p><p><strong>Efectos secundarios posibles:</strong> Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal.</p><p><strong>Contraindicaciones (declaro NO presentar):</strong> Embarazo/lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.</p><p><strong>Cuidados post-tratamiento:</strong> Evitar sol 15 días, usar FPS 50+, no cera entre sesiones, mantener zona hidratada.</p><p style="margin-top:14px;padding:10px;background:#f5f5f0;border-left:3px solid #3d4f30;">Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a ${studioName}</strong> a realizar el tratamiento acordado.</p>`;
-  }
-  // Sección de datos del paciente
-  const datosPaciente = `
-    <div style="background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:16px;margin:20px 0;font-size:11px;">
-      <div style="font-weight:bold;margin-bottom:10px;color:#333;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:4px;">DATOS DEL PACIENTE</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;line-height:1.8;">
-        <div><strong>Nombre y Apellido:</strong> ${p.nombre ? p.nombre+' '+p.apellido : '__________________________________'}</div>
-        <div><strong>DNI / Documento:</strong> ${p.dni || p.documento || '__________________________________'}</div>
-        <div><strong>Teléfono:</strong> ${p.telefono || '__________________________________'}</div>
-        <div><strong>Correo electrónico:</strong> ${p.email || '__________________________________'}</div>
-        <div><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
-      </div>
+  
+  // Texto del consentimiento con formato exacto solicitado
+  const cuerpoTexto = `
+    <div style="white-space:pre-wrap;line-height:2;font-size:13px;">
+DATOS DEL PACIENTE
+Nombre y Apellido: __________________________________
+DNI / Documento: __________________________________
+Teléfono: __________________________________
+Correo electrónico: __________________________________
+Fecha: __ / __ / ____
+
+
+1.⁠ ⁠INFORMACIÓN DEL PROCEDIMIENTO
+La depilación láser es un procedimiento estético que utiliza energía lumínica para debilitar
+progresivamente el folículo piloso y reducir el crecimiento del vello. El número de sesiones
+necesarias puede variar según el tipo de piel, vello, zona tratada y factores hormonales. No se
+garantiza la eliminación total permanente del vello.
+2.⁠ ⁠POSIBLES EFECTOS SECUNDARIOS
+Pueden presentarse efectos temporales como enrojecimiento, inflamación leve, sensación de calor
+o sensibilidad. En casos poco frecuentes pueden ocurrir quemaduras, ampollas o cambios
+temporales en la pigmentación de la piel.
+3.⁠ ⁠DECLARACIÓN DE SALUD DEL PACIENTE
+Declaro que he informado sobre mi estado de salud y confirmo que no padezco condiciones
+incompatibles con el tratamiento como embarazo, enfermedades dermatológicas activas, cáncer
+de piel, epilepsia fotosensible, diabetes no controlada, infecciones cutáneas activas, herpes activo
+en la zona a tratar, uso reciente de isotretinoína, medicamentos fotosensibles o bronceado
+reciente.
+4.⁠ ⁠RESPONSABILIDAD DEL PACIENTE
+Me comprometo a seguir las recomendaciones indicadas por el centro estético. El incumplimiento
+de dichas indicaciones puede aumentar el riesgo de efectos adversos, liberando de
+responsabilidad al centro estético.
+5.⁠ ⁠POLÍTICA DE CITAS E INASISTENCIAS
+Si el paciente confirma su cita y no asiste, la sesión será descontada de su paquete. Más de dos
+inasistencias confirmadas pueden ocasionar la cancelación total del paquete sin devolución del
+dinero. Si el paciente no responde al llamado para agendar su cita en dos ocasiones consecutivas
+(aproximadamente dos meses), el tratamiento podrá darse por finalizado perdiendo las sesiones
+pendientes.
+6.⁠ ⁠AUTORIZACIÓN DE REGISTRO FOTOGRÁFICO
+Autorizo la toma de fotografías clínicas antes y después del tratamiento con fines de seguimiento y
+registro interno.
+7.⁠ ⁠CONSENTIMIENTO
+Declaro haber leído y comprendido la información anterior y autorizo voluntariamente la realización
+del procedimiento de depilación láser.
+Firma del paciente: ______________________________
+Nombre: ________________________________________
+DNI: _________________________________________
     </div>
   `;
+
   area.innerHTML = `
     <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;padding:30px 40px;font-size:12px;color:#1c1c17;">
       <div style="text-align:center;margin-bottom:20px;">
@@ -3130,13 +3158,11 @@ function printConsent(){
         <div style="font-size:10px;color:#666;margin-top:2px;">${studioAddr}</div>
         <div style="font-size:14px;font-weight:600;margin-top:10px;border-bottom:2px solid #3d4f30;padding-bottom:6px;">CONSENTIMIENTO INFORMADO PARA TRATAMIENTO ESTÉTICO</div>
       </div>
-      ${datosPaciente}
       ${cuerpoTexto}
-      <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:flex-end;">
+      <div style="margin-top:40px;display:flex;justify-content:space-between;align-items:flex-end;">
         <div>
           <div style="margin-bottom:6px;">Firma de la Paciente:</div>
           ${firmaHtml}
-          <div style="margin-top:4px;font-size:10px;color:#666;">${nombre}</div>
         </div>
         <div style="text-align:right;">
           <div>Lima, ${hoy}</div>
@@ -3164,7 +3190,6 @@ function downloadConsent(){
 
   const studioName = appConfig.studioName || 'ELLE STUDIO';
   const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
-  const nombre = p.nombre + ' ' + p.apellido;
   const hoy = new Date(p.consentimiento.fecha);
   const fechaStr = hoy.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const horaStr = hoy.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
@@ -3190,47 +3215,57 @@ function downloadConsent(){
   doc.line(margin, y, W-margin, y);
   y += 8;
 
-  // Sección DATOS DEL PACIENTE
-  doc.setFont('helvetica','bold');
-  doc.setFontSize(11);
-  doc.setTextColor(40,40,30);
-  doc.text('DATOS DEL PACIENTE', margin, y);
-  y += 2;
-  doc.setDrawColor(200,200,190);
-  doc.setLineWidth(0.3);
-  doc.line(margin, y, W-margin, y);
-  y += 4;
-  
-  doc.setFont('helvetica','normal');
-  doc.setFontSize(10);
-  doc.setTextColor(30,30,23);
-  
-  const dniText = p.dni || p.documento || '__________________________________';
-  const telText = p.telefono || '__________________________________';
-  const emailText = p.email || '__________________________________';
-  const fechaActual = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
-  
-  doc.text(`Nombre y Apellido: ${nombre || '__________________________________'}`, margin, y);
-  y += 6;
-  doc.text(`DNI / Documento: ${dniText}`, margin, y);
-  y += 6;
-  doc.text(`Teléfono: ${telText}`, margin, y);
-  y += 6;
-  doc.text(`Correo electrónico: ${emailText}`, margin, y);
-  y += 6;
-  doc.text(`Fecha: ${fechaActual}`, margin, y);
-  y += 8;
-
-  // Cuerpo del texto
+  // Cuerpo del texto - Solo el texto de consentimiento, sin datos del paciente
   doc.setFont('helvetica','normal');
   doc.setFontSize(10);
   doc.setTextColor(30,30,23);
 
   let textoConsentimiento = '';
   if(appConfig.consentimientoTexto && appConfig.consentimientoTexto.trim()){
-    textoConsentimiento = appConfig.consentimientoTexto.replace(/\[Nombre\]/g, nombre);
+    textoConsentimiento = appConfig.consentimientoTexto;
   } else {
-    textoConsentimiento = `Yo, ${nombre}, mayor de edad, declaro que he recibido información clara y comprensible sobre el tratamiento a realizarme en ${studioName} y que consiento voluntariamente su ejecución.\n\nINFORMACIÓN DEL TRATAMIENTO: El tratamiento de Depilación Láser utiliza energía lumínica de alta intensidad para reducir el vello de forma progresiva y permanente. Se requieren múltiples sesiones y los resultados varían según cada paciente.\n\nEFECTOS SECUNDARIOS POSIBLES: Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal en la zona tratada.\n\nCONTRAINDICACIONES (declaro NO presentar): Embarazo o lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.\n\nCUIDADOS POST-TRATAMIENTO: Evitar exposición solar 15 días, usar protector solar FPS 50+, no depilación con cera entre sesiones, mantener zona hidratada.\n\nAUTORIZACIÓN: Habiendo sido debidamente informada/o de los beneficios, riesgos y cuidados del tratamiento, autorizo voluntariamente a ${studioName} a realizarlo y confirmo que la información proporcionada es verídica.`;
+    textoConsentimiento = `DATOS DEL PACIENTE
+Nombre y Apellido: __________________________________
+DNI / Documento: __________________________________
+Teléfono: __________________________________
+Correo electrónico: __________________________________
+Fecha: __ / __ / ____
+
+
+1.⁠ ⁠INFORMACIÓN DEL PROCEDIMIENTO
+La depilación láser es un procedimiento estético que utiliza energía lumínica para debilitar
+progresivamente el folículo piloso y reducir el crecimiento del vello. El número de sesiones
+necesarias puede variar según el tipo de piel, vello, zona tratada y factores hormonales. No se
+garantiza la eliminación total permanente del vello.
+2.⁠ ⁠POSIBLES EFECTOS SECUNDARIOS
+Pueden presentarse efectos temporales como enrojecimiento, inflamación leve, sensación de calor
+o sensibilidad. En casos poco frecuentes pueden ocurrir quemaduras, ampollas o cambios
+temporales en la pigmentación de la piel.
+3.⁠ ⁠DECLARACIÓN DE SALUD DEL PACIENTE
+Declaro que he informado sobre mi estado de salud y confirmo que no padezco condiciones
+incompatibles con el tratamiento como embarazo, enfermedades dermatológicas activas, cáncer
+de piel, epilepsia fotosensible, diabetes no controlada, infecciones cutáneas activas, herpes activo
+en la zona a tratar, uso reciente de isotretinoína, medicamentos fotosensibles o bronceado
+reciente.
+4.⁠ ⁠RESPONSABILIDAD DEL PACIENTE
+Me comprometo a seguir las recomendaciones indicadas por el centro estético. El incumplimiento
+de dichas indicaciones puede aumentar el riesgo de efectos adversos, liberando de
+responsabilidad al centro estético.
+5.⁠ ⁠POLÍTICA DE CITAS E INASISTENCIAS
+Si el paciente confirma su cita y no asiste, la sesión será descontada de su paquete. Más de dos
+inasistencias confirmadas pueden ocasionar la cancelación total del paquete sin devolución del
+dinero. Si el paciente no responde al llamado para agendar su cita en dos ocasiones consecutivas
+(aproximadamente dos meses), el tratamiento podrá darse por finalizado perdiendo las sesiones
+pendientes.
+6.⁠ ⁠AUTORIZACIÓN DE REGISTRO FOTOGRÁFICO
+Autorizo la toma de fotografías clínicas antes y después del tratamiento con fines de seguimiento y
+registro interno.
+7.⁠ ⁠CONSENTIMIENTO
+Declaro haber leído y comprendido la información anterior y autorizo voluntariamente la realización
+del procedimiento de depilación láser.
+Firma del paciente: ______________________________
+Nombre: ________________________________________
+DNI: _________________________________________`;
   }
 
   const lineas = doc.splitTextToSize(textoConsentimiento, maxW);
@@ -3263,8 +3298,6 @@ function downloadConsent(){
   doc.setFont('helvetica','normal');
   doc.setFontSize(9);
   doc.setTextColor(100,100,80);
-  doc.text(nombre, margin, y);
-  y += 5;
   doc.text(`Firmado el ${fechaStr} a las ${horaStr}`, margin, y);
 
   // Pie de página
