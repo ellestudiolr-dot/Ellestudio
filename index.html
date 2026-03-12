@@ -1917,35 +1917,63 @@ async function supaLoadConfig(key){
 async function initFromSupabase(){
   showToast('🔄 Sincronizando datos...','#6a8c5a');
   let syncOk = true;
+  
   // Cargar pacientes
   const remotePatients = await supaLoadPatients();
-  if(remotePatients !== null && remotePatients.length >= 0){
+  if(remotePatients !== null && remotePatients.length > 0){
     patients = remotePatients;
     try{ localStorage.setItem('ce_v3_patients', JSON.stringify(patients)); }catch(e){}
-  } else if(remotePatients === null){ syncOk = false; }
+  } else if(remotePatients === null){ 
+    syncOk = false; 
+    // Mantener pacientes locales, no sobrescribir con null/empty
+    console.warn('Supabase pacientes: null, usando locales');
+  }
+  
   // Cargar preCitas
   const remotePC = await supaLoadConfig('precitas');
-  if(remotePC !== null){ preCitas = remotePC; try{ localStorage.setItem('ce_v3_precitas',JSON.stringify(preCitas)); }catch(e){} }
+  if(remotePC !== null){ 
+    preCitas = remotePC; 
+    try{ localStorage.setItem('ce_v3_precitas',JSON.stringify(preCitas)); }catch(e){} 
+  }
+  
   // Cargar registros
   const remoteReg = await supaLoadConfig('registros');
-  if(remoteReg !== null){ registros = remoteReg; try{ localStorage.setItem('ce_v3_registros',JSON.stringify(registros)); }catch(e){} }
+  if(remoteReg !== null){ 
+    registros = remoteReg; 
+    try{ localStorage.setItem('ce_v3_registros',JSON.stringify(registros)); }catch(e){} 
+  }
+  
   // Cargar precios
   const remotePrecios = await supaLoadConfig('precios');
-  if(remotePrecios !== null){ preciosData = migratePrecios(remotePrecios)||preciosData; try{ localStorage.setItem('ellePrecios2',JSON.stringify(preciosData)); }catch(e){} }
+  if(remotePrecios !== null){ 
+    preciosData = migratePrecios(remotePrecios)||preciosData; 
+    try{ localStorage.setItem('ellePrecios2',JSON.stringify(preciosData)); }catch(e){} 
+  }
+  
   // Cargar configuración
   const remoteConfig = await supaLoadConfig('appConfig');
   if(remoteConfig !== null){
     appConfig = Object.assign({}, DEFAULT_CONFIG, remoteConfig);
     try{ localStorage.setItem('ce_v3_config', JSON.stringify(appConfig)); }catch(e){}
     applyConfigToUI();
+  } else {
+    // Si no hay config en Supabase, usar la local
+    applyConfigToUI();
   }
+  
   // Cargar checks de agendadas
   const agKey = _agendaCheckKey();
   const remoteAgendadas = await supaLoadConfig('agendadas_'+agKey);
-  if(remoteAgendadas !== null){ try{ localStorage.setItem(agKey, JSON.stringify(remoteAgendadas)); }catch(e){} }
+  if(remoteAgendadas !== null){ 
+    try{ localStorage.setItem(agKey, JSON.stringify(remoteAgendadas)); }catch(e){} 
+  }
+  
   renderAll();
-  if(syncOk){ showToast('✅ Datos sincronizados','#6a8c5a'); }
-  else{ showToast('! Sin conexión — usando datos locales','#e08000'); }
+  if(syncOk){ 
+    showToast('✅ Datos sincronizados','#6a8c5a'); 
+  } else { 
+    showToast('⚠️ Sin conexión a Supabase — usando datos locales','#e08000'); 
+  }
 }
 
 function save(){
