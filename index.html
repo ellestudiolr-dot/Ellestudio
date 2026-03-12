@@ -3095,6 +3095,11 @@ function resetConsentForResign(){
 
 function printConsent(){
   const p = patients.find(x=>String(x.id)===String(_consentPid));
+  const nombre = p ? p.nombre + ' ' + p.apellido : '___________________________';
+  const dni = p && (p.dni || p.documento) ? p.dni || p.documento : '___________________________';
+  const telefono = p && p.telefono ? p.telefono : '___________________________';
+  const email = p && p.email ? p.email : '___________________________';
+  const fechaActual = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const hoy = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const firmaHtml = (p&&p.consentimiento&&p.consentimiento.firma)
     ? `<img src="${p.consentimiento.firma}" style="width:280px;height:90px;object-fit:contain;border:1px solid #ccc;border-radius:6px;padding:4px;">`
@@ -3103,15 +3108,15 @@ function printConsent(){
   const studioName = appConfig.studioName || 'ELLE STUDIO';
   const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
   
-  // Texto del consentimiento con formato exacto solicitado
+  // Texto del consentimiento con formato exacto solicitado y datos del paciente insertados
   const cuerpoTexto = `
     <div style="white-space:pre-wrap;line-height:2;font-size:13px;">
 DATOS DEL PACIENTE
-Nombre y Apellido: __________________________________
-DNI / Documento: __________________________________
-Teléfono: __________________________________
-Correo electrónico: __________________________________
-Fecha: __ / __ / ____
+Nombre y Apellido: ${nombre}
+DNI / Documento: ${dni}
+Teléfono: ${telefono}
+Correo electrónico: ${email}
+Fecha: ${fechaActual}
 
 
 1.⁠ ⁠INFORMACIÓN DEL PROCEDIMIENTO
@@ -3190,9 +3195,14 @@ function downloadConsent(){
 
   const studioName = appConfig.studioName || 'ELLE STUDIO';
   const studioAddr = appConfig.address || 'Av. Paz Soldán 235, San Isidro, Lima, Perú';
+  const nombre = p.nombre + ' ' + p.apellido;
+  const dni = p && (p.dni || p.documento) ? p.dni || p.documento : '___________________________';
+  const telefono = p && p.telefono ? p.telefono : '___________________________';
+  const email = p && p.email ? p.email : '___________________________';
   const hoy = new Date(p.consentimiento.fecha);
   const fechaStr = hoy.toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
   const horaStr = hoy.toLocaleTimeString('es-PE',{hour:'2-digit',minute:'2-digit'});
+  const fechaActual = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
 
   // Encabezado
   doc.setFont('helvetica','bold');
@@ -3225,11 +3235,11 @@ function downloadConsent(){
     textoConsentimiento = appConfig.consentimientoTexto;
   } else {
     textoConsentimiento = `DATOS DEL PACIENTE
-Nombre y Apellido: __________________________________
-DNI / Documento: __________________________________
-Teléfono: __________________________________
-Correo electrónico: __________________________________
-Fecha: __ / __ / ____
+Nombre y Apellido: ${nombre}
+DNI / Documento: ${dni}
+Teléfono: ${telefono}
+Correo electrónico: ${email}
+Fecha: ${fechaActual}
 
 
 1.⁠ ⁠INFORMACIÓN DEL PROCEDIMIENTO
