@@ -3110,6 +3110,19 @@ function printConsent(){
   } else {
     cuerpoTexto = `<p>Yo, <strong>${nombre}</strong>, mayor de edad, declaro haber recibido información clara sobre el tratamiento a realizarme en <strong>${studioName}</strong> y consiento voluntariamente su ejecución.</p><p><strong>Información del Tratamiento:</strong> La Depilación Láser utiliza energía lumínica para reducir el vello de forma progresiva. Se requieren múltiples sesiones y los resultados varían según cada paciente.</p><p><strong>Efectos secundarios posibles:</strong> Enrojecimiento temporal, hiperpigmentación leve, costras o ampollas en casos excepcionales, sensibilidad temporal.</p><p><strong>Contraindicaciones (declaro NO presentar):</strong> Embarazo/lactancia, medicamentos fotosensibilizantes, enfermedades cutáneas activas, bronceado reciente, marcapasos, queloides.</p><p><strong>Cuidados post-tratamiento:</strong> Evitar sol 15 días, usar FPS 50+, no cera entre sesiones, mantener zona hidratada.</p><p style="margin-top:14px;padding:10px;background:#f5f5f0;border-left:3px solid #3d4f30;">Habiendo sido debidamente informada/o, <strong>autorizo voluntariamente a ${studioName}</strong> a realizar el tratamiento acordado.</p>`;
   }
+  // Sección de datos del paciente
+  const datosPaciente = `
+    <div style="background:#f9f9f9;border:1px solid #ddd;border-radius:8px;padding:16px;margin:20px 0;font-size:11px;">
+      <div style="font-weight:bold;margin-bottom:10px;color:#333;text-transform:uppercase;border-bottom:1px solid #ccc;padding-bottom:4px;">DATOS DEL PACIENTE</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 16px;line-height:1.8;">
+        <div><strong>Nombre y Apellido:</strong> ${p.nombre ? p.nombre+' '+p.apellido : '__________________________________'}</div>
+        <div><strong>DNI / Documento:</strong> ${p.dni || p.documento || '__________________________________'}</div>
+        <div><strong>Teléfono:</strong> ${p.telefono || '__________________________________'}</div>
+        <div><strong>Correo electrónico:</strong> ${p.email || '__________________________________'}</div>
+        <div><strong>Fecha:</strong> ${new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'})}</div>
+      </div>
+    </div>
+  `;
   area.innerHTML = `
     <div style="font-family:Arial,sans-serif;max-width:700px;margin:auto;padding:30px 40px;font-size:12px;color:#1c1c17;">
       <div style="text-align:center;margin-bottom:20px;">
@@ -3117,6 +3130,7 @@ function printConsent(){
         <div style="font-size:10px;color:#666;margin-top:2px;">${studioAddr}</div>
         <div style="font-size:14px;font-weight:600;margin-top:10px;border-bottom:2px solid #3d4f30;padding-bottom:6px;">CONSENTIMIENTO INFORMADO PARA TRATAMIENTO ESTÉTICO</div>
       </div>
+      ${datosPaciente}
       ${cuerpoTexto}
       <div style="margin-top:30px;display:flex;justify-content:space-between;align-items:flex-end;">
         <div>
@@ -3174,6 +3188,37 @@ function downloadConsent(){
   doc.setDrawColor(60,79,48);
   doc.setLineWidth(0.5);
   doc.line(margin, y, W-margin, y);
+  y += 8;
+
+  // Sección DATOS DEL PACIENTE
+  doc.setFont('helvetica','bold');
+  doc.setFontSize(11);
+  doc.setTextColor(40,40,30);
+  doc.text('DATOS DEL PACIENTE', margin, y);
+  y += 2;
+  doc.setDrawColor(200,200,190);
+  doc.setLineWidth(0.3);
+  doc.line(margin, y, W-margin, y);
+  y += 4;
+  
+  doc.setFont('helvetica','normal');
+  doc.setFontSize(10);
+  doc.setTextColor(30,30,23);
+  
+  const dniText = p.dni || p.documento || '__________________________________';
+  const telText = p.telefono || '__________________________________';
+  const emailText = p.email || '__________________________________';
+  const fechaActual = new Date().toLocaleDateString('es-PE',{day:'2-digit',month:'long',year:'numeric'});
+  
+  doc.text(`Nombre y Apellido: ${nombre || '__________________________________'}`, margin, y);
+  y += 6;
+  doc.text(`DNI / Documento: ${dniText}`, margin, y);
+  y += 6;
+  doc.text(`Teléfono: ${telText}`, margin, y);
+  y += 6;
+  doc.text(`Correo electrónico: ${emailText}`, margin, y);
+  y += 6;
+  doc.text(`Fecha: ${fechaActual}`, margin, y);
   y += 8;
 
   // Cuerpo del texto
