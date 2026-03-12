@@ -3374,13 +3374,73 @@ function renderZones(p,sv,svi){
 }
 
 function toggleZone(svi,zi){const b=document.getElementById(`zbody_${svi}_${zi}`);const a=document.getElementById(`zarr_${svi}_${zi}`);const h=b.style.display==='none';b.style.display=h?'block':'none';a.textContent=h?'▼':'▶';}
-function setZoneEstado(svi,zi,val){const p=patients.find(x=>String(x.id)===String(currentPid));p.servicios[svi].zonas[zi].estado=val;save();renderZones(p,p.servicios[svi],svi);}
-function updSes(svi,zi,si,f,v){const p=patients.find(x=>String(x.id)===String(currentPid));p.servicios[svi].zonas[zi].sesiones[si][f]=v;save();renderAlerts();renderPatients();}
-function togAs(svi,zi,si){const p=patients.find(x=>String(x.id)===String(currentPid));const s=p.servicios[svi].zonas[zi].sesiones[si];s.asistio=!s.asistio;save();renderZones(p,p.servicios[svi],svi);renderAlerts();renderPatients();}
-function addSes(svi,zi){const p=patients.find(x=>String(x.id)===String(currentPid));const sv=p.servicios[svi];const today=new Date().toISOString().split('T')[0];sv.zonas[zi].sesiones.push({fecha:today,rate:'',pulse:'',cm2:'',asistio:false,plan:sv.plan||'Sesión',atencion:'',comentarios:''});save();renderZones(p,sv,svi);renderStats();renderAlerts();renderPatients();}
-function delSes(svi,zi,si){if(!confirm('¿Eliminar sesión?'))return;const p=patients.find(x=>String(x.id)===String(currentPid));p.servicios[svi].zonas[zi].sesiones.splice(si,1);save();renderZones(p,p.servicios[svi],svi);renderStats();renderAlerts();renderPatients();}
-function delZone(svi,zi){if(!confirm('¿Eliminar zona?'))return;const p=patients.find(x=>String(x.id)===String(currentPid));p.servicios[svi].zonas.splice(zi,1);save();renderZones(p,p.servicios[svi],svi);}
-function deleteSvc(svId){if(!confirm('¿Eliminar este servicio y todas sus sesiones?'))return;const p=patients.find(x=>String(x.id)===String(currentPid));p.servicios=p.servicios.filter(sv=>sv.id!=svId);save();renderSvcTabs(p);renderStats();renderAlerts();renderPatients();}
+function setZoneEstado(svi,zi,val){
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  p.servicios[svi].zonas[zi].estado=val;
+  save();
+  renderZones(p,p.servicios[svi],svi);
+}
+function updSes(svi,zi,si,f,v){
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  p.servicios[svi].zonas[zi].sesiones[si][f]=v;
+  save();
+  renderAlerts();
+  renderPatients();
+}
+function togAs(svi,zi,si){
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  const s=p.servicios[svi].zonas[zi].sesiones[si];
+  s.asistio=!s.asistio;
+  save();
+  renderZones(p,p.servicios[svi],svi);
+  renderAlerts();
+  renderPatients();
+}
+function addSes(svi,zi){
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  const sv=p.servicios[svi];
+  const today=new Date().toISOString().split('T')[0];
+  sv.zonas[zi].sesiones.push({fecha:today,rate:'',pulse:'',cm2:'',asistio:false,plan:sv.plan||'Sesión',atencion:'',comentarios:''});
+  save();
+  renderZones(p,sv,svi);
+  renderStats();
+  renderAlerts();
+  renderPatients();
+}
+function delSes(svi,zi,si){
+  if(!confirm('¿Eliminar sesión?')) return;
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  p.servicios[svi].zonas[zi].sesiones.splice(si,1);
+  save();
+  renderZones(p,p.servicios[svi],svi);
+  renderStats();
+  renderAlerts();
+  renderPatients();
+}
+function delZone(svi,zi){
+  if(!confirm('¿Eliminar zona?')) return;
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  p.servicios[svi].zonas.splice(zi,1);
+  save();
+  renderZones(p,p.servicios[svi],svi);
+}
+function deleteSvc(svId){
+  if(!confirm('¿Eliminar este servicio y todas sus sesiones?')) return;
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
+  p.servicios=p.servicios.filter(sv=>sv.id!=svId);
+  save();
+  renderSvcTabs(p);
+  renderStats();
+  renderAlerts();
+  renderPatients();
+}
 
 let _addZoneSvi=0;
 function openAddZoneModal(svi){_addZoneSvi=svi;document.getElementById('newZoneName').value='';openModal('addZoneModal');}
@@ -4060,7 +4120,16 @@ function renderTracking(){
     </tr>`;
   }).join('');
 }
-function togContacto(pid,svId,zona,si){const p=patients.find(x=>String(x.id)===String(pid));const sv=(p.servicios||[]).find(x=>x.id==svId);if(!sv)return;const z=(sv.zonas||[]).find(z=>z.nombre===zona);if(!z)return;const s=z.sesiones[si];if(s){s.contactado=!s.contactado;save();renderTracking();}}
+function togContacto(pid,svId,zona,si){
+  const p=patients.find(x=>String(x.id)===String(pid));
+  if(!p){ console.warn('Paciente no encontrado en togContacto'); return; }
+  const sv=(p.servicios||[]).find(x=>x.id==svId);
+  if(!sv)return;
+  const z=(sv.zonas||[]).find(z=>z.nombre===zona);
+  if(!z)return;
+  const s=z.sesiones[si];
+  if(s){s.contactado=!s.contactado;save();renderTracking();}
+}
 
 // ===== WHATSAPP =====
 const LASER_TPL=`Hola [Nombre]! Queremos recordarte que tu proxima sesion de *Depilacion Laser* esta por llegar. Agenda tu turno cuando quieras eligiendo el dia y horario que mas te convenga:
