@@ -2224,19 +2224,26 @@ function openNuevaCitaModal(){
 }
 
 function saveNuevaCita(){
-  const nombre=document.getElementById('ncNombre').value.trim();
+  const nombreEl=document.getElementById('ncNombre');
+  if(!nombreEl){ alert('Error: formulario no disponible'); return; }
+  const nombre=nombreEl.value.trim();
   if(!nombre){alert('El nombre es obligatorio.');return;}
+  const horaEl=document.getElementById('ncHora');
+  const cubEl=document.getElementById('ncCubiculo');
+  const apellidoEl=document.getElementById('ncApellido');
+  const servicioEl=document.getElementById('ncServicio');
+  const notasEl=document.getElementById('ncNotas');
   const today=new Date().toISOString().split('T')[0];
   const citas=JSON.parse(localStorage.getItem('ce_v3_citas')||'[]');
   citas.push({
     id:'cita_'+Date.now(),
     fecha:today,
-    hora:document.getElementById('ncHora').value,
-    cubiculo:document.getElementById('ncCubiculo').value,
+    hora:horaEl ? horaEl.value : '',
+    cubiculo:cubEl ? cubEl.value : '01',
     nombre,
-    apellido:document.getElementById('ncApellido').value.trim(),
-    servicio:document.getElementById('ncServicio').value.trim(),
-    notas:document.getElementById('ncNotas').value.trim(),
+    apellido:apellidoEl ? apellidoEl.value.trim() : '',
+    servicio:servicioEl ? servicioEl.value.trim() : '',
+    notas:notasEl ? notasEl.value.trim() : '',
     asistio:false
   });
   localStorage.setItem('ce_v3_citas',JSON.stringify(citas));
@@ -3471,15 +3478,31 @@ function deleteSvc(svId){
 }
 
 let _addZoneSvi=0;
-function openAddZoneModal(svi){_addZoneSvi=svi;document.getElementById('newZoneName').value='';openModal('addZoneModal');}
-function saveNewZone(){const name=document.getElementById('newZoneName').value.trim();if(!name){alert('Ingresa el nombre de la zona.');return;}const p=patients.find(x=>String(x.id)===String(currentPid));if(!p){alert('Error: cierra y vuelve a abrir la ficha.');return;}const sv=p.servicios[_addZoneSvi];if(!sv){alert('Error: no se encontró el servicio.');return;}if(!sv.zonas)sv.zonas=[];sv.zonas.push({nombre:name,sesiones:[]});save();closeModal('addZoneModal');renderZones(p,sv,_addZoneSvi);}
+function openAddZoneModal(svi){_addZoneSvi=svi;const nameEl=document.getElementById('newZoneName');if(nameEl)nameEl.value='';openModal('addZoneModal');}
+function saveNewZone(){
+  const nameEl=document.getElementById('newZoneName');
+  if(!nameEl){ alert('Error: formulario no disponible'); return; }
+  const name=nameEl.value.trim();
+  if(!name){alert('Ingresa el nombre de la zona.');return;}
+  const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){alert('Error: cierra y vuelve a abrir la ficha.');return;}
+  const sv=p.servicios[_addZoneSvi];
+  if(!sv){alert('Error: no se encontró el servicio.');return;}
+  if(!sv.zonas)sv.zonas=[];
+  sv.zonas.push({nombre:name,sesiones:[]});
+  save();
+  closeModal('addZoneModal');
+  renderZones(p,sv,_addZoneSvi);
+}
 
 // ===== ADD SERVICE TO PATIENT =====
 function openAddSvcModal(){
   const sel=document.getElementById('asSvc');
-  sel.innerHTML='<option value="">Seleccionar...</option>'+SERVICES().map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('asFecha').value=new Date().toISOString().split('T')[0];
-  document.getElementById('asComentarios').value='';
+  if(sel) sel.innerHTML='<option value="">Seleccionar...</option>'+SERVICES().map(s=>`<option>${s}</option>`).join('');
+  const fechaEl=document.getElementById('asFecha');
+  const comEl=document.getElementById('asComentarios');
+  if(fechaEl) fechaEl.value=new Date().toISOString().split('T')[0];
+  if(comEl) comEl.value='';
   // Si la paciente tiene pago inicial pendiente, mostrarlo
   const p=patients.find(x=>String(x.id)===String(currentPid));
   const pagoInfo=document.getElementById('asSvcPagoInfo');
@@ -3496,17 +3519,24 @@ function openAddSvcModal(){
   openModal('addSvcModal');
 }
 function saveNewSvc(){
-  const servicio=document.getElementById('asSvc').value;
-  const cubiculo=document.getElementById('asCubiculo').value;
+  const servicioEl=document.getElementById('asSvc');
+  const cubiculoEl=document.getElementById('asCubiculo');
+  if(!servicioEl || !cubiculoEl){ alert('Error: formulario no disponible'); return; }
+  const servicio=servicioEl.value;
+  const cubiculo=cubiculoEl.value;
   if(!servicio){alert('Selecciona un servicio.');return;}
   const p=patients.find(x=>String(x.id)===String(currentPid));
+  if(!p){ alert('Error: paciente no encontrado'); return; }
   if(!p.servicios)p.servicios=[];
   const svcId=Date.now();
+  const planEl=document.getElementById('asPlan');
+  const fechaEl=document.getElementById('asFecha');
+  const comentariosEl=document.getElementById('asComentarios');
   const newSvc={
     id:svcId,servicio,cubiculo,
-    plan:document.getElementById('asPlan').value,
-    fechaInicio:document.getElementById('asFecha').value,
-    comentarios:document.getElementById('asComentarios').value,
+    plan:planEl ? planEl.value : 'Sesión',
+    fechaInicio:fechaEl ? fechaEl.value : new Date().toISOString().split('T')[0],
+    comentarios:comentariosEl ? comentariosEl.value : '',
     zonas:[]
   };
   // Aplicar pago inicial si existe
@@ -3546,14 +3576,20 @@ function openEditPatient(id){
   openModal('editPatientModal');
 }
 function saveEditPatient(){
-  const nombre=document.getElementById('eNombre').value.trim();
-  const apellido=document.getElementById('eApellido').value.trim();
+  const nombreEl=document.getElementById('eNombre');
+  const apellidoEl=document.getElementById('eApellido');
+  if(!nombreEl || !apellidoEl){ alert('Error: formulario no disponible'); return; }
+  const nombre=nombreEl.value.trim();
+  const apellido=apellidoEl.value.trim();
   if(!nombre||!apellido){alert('Completa nombre y apellido.');return;}
   const p=patients.find(x=>String(x.id)===String(_editPid));if(!p)return;
   p.nombre=nombre;p.apellido=apellido;
-  p.telefono=document.getElementById('eTel').value.trim();
-  p.fechaInicio=document.getElementById('eFecha').value;
-  p.comentarios=document.getElementById('eComentarios').value.trim();
+  const telEl=document.getElementById('eTel');
+  const fechaEl=document.getElementById('eFecha');
+  const comEl=document.getElementById('eComentarios');
+  p.telefono=telEl ? telEl.value.trim() : '';
+  p.fechaInicio=fechaEl ? fechaEl.value : '';
+  p.comentarios=comEl ? comEl.value.trim() : '';
   save();closeModal('editPatientModal');
   renderPatients();renderStats();initSortSelect();renderAlertsInicio();renderStatsInicio();
   showToast('✅ Paciente actualizada','#6a9e7a');
